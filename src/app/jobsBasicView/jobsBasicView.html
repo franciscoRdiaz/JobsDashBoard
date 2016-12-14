@@ -1,4 +1,12 @@
 <h2>{{jobNamesTitle}}</h2>
-<div *ngFor="let jobData of jobsComponent">
-  <span> {{jobData.name}} => {{jobData.urlJob}} => {{jobData.result}} => {{jobData.displayLastExecNumber}} => {{jobData.lastExecTime}} => {{jobData.timestamp}} </span>
-</div>
+
+<div><button  (click)="initLoadJobsStatus()">Carga inicial</button></div>
+
+  <ul id="jobscomponent">
+
+    <li *ngFor="let jobData of jobsModel">
+<!--job *ngFor="let jobData of jobsModel" [jobModel]="jobData" ></job-->
+      <job  [jobModel]="jobData" ></job>
+    </li>
+  </ul>
+

@@ -1,8 +1,8 @@
 /**
  * Created by frdiaz on 12/12/2016.
  */
-import { Component } from "@angular/core";
-
+import {Component, Input} from "@angular/core";
+import { JobModel } from "./job.model";
 @Component({
   selector: "job",
   templateUrl: "./job.component.html"
@@ -10,24 +10,11 @@ import { Component } from "@angular/core";
 
 export class JobComponent {
 
-  public urlJobExecution:string;
-  public lastExecTime:number;
-  public lastExecNumber:number;
-  public displayLastExecNumber:string;
-  public result: string;
-  public timestamp: number;
-
-  constructor( public name:string, public urlJob:string){}
-
-  buildUrlJobApi(){
-
-  }
-
-  buildUrlRunJobApi(){
-
-  }
+  @Input()
+  private jobModel: JobModel;
 
   calculateProgres(){
 
   }
+
 }

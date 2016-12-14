@@ -1,10 +1,11 @@
 /**
  * Created by frdiaz on 02/12/2016.
  */
-import { Component } from "@angular/core";
-import { JobsStatusService } from "./jobsBasicView.service"
-import { OnInit } from "@angular/core";
-import {JobComponent} from "../job/job.component";
+import { Component } from '@angular/core';
+import { JobsStatusService } from './jobsBasicView.service';
+import { OnInit } from '@angular/core';
+import {JobComponent} from '../job/job.component';
+import { JobModel } from '../job/job.model';
 
 @Component({
   selector: 'jobsBasicView',
@@ -14,62 +15,90 @@ import {JobComponent} from "../job/job.component";
 
 export class JobsBasicViewComponent implements OnInit{
 
-  private jobs = [];
-  private jobsComponent: JobComponent[] = [];
+
+  //private jobsComponent: JobComponent[] = [];
+  private jobsModel: JobModel[] = [];
   jobNamesTitle: string = "Jobs";
 
   constructor(private jobsStatusService: JobsStatusService){}
 
+  /**
+   * Initial Dashboard's load.
+   */
   ngOnInit(){
-    this.getJobsStatus();
+    //this.getJobsStatus();
   }
 
+  public initLoadJobsStatus(){
+    this.getJobsStatus();
+  }
+  /**
+   * Starts the initial built of the Dashboard
+   */
   getJobsStatus(){
-    this.jobs = [];
+
     this.jobsStatusService.getJobsData().subscribe(
       //names => this.jobs = names,
       jobs => {this.createJobData(jobs)
       },
-      error => this.jobs[0] = "No hay jobs"
+      error => console.log("No hay jobs")
     );
   }
 
+  /**
+   * Orchestrates the information retrieval to build jobs object
+   * @param jobs
+   */
   createJobData(jobs: any[]){
-    this.jobs = jobs;
-    let jobComponentAux:JobComponent;
 
-    for(let job of this.jobs){
-      jobComponentAux = new JobComponent(job.name, job.url);
-      this.jobsComponent.push(jobComponentAux);
+    console.log("Create job data:");
+    for(let job of jobs){
+      console.log("       "+job.url);
     }
-    //TODO: Delete line console.log("TAMAÑO JOBSCOMPONENT 2: " + this.jobsComponent.length);
 
-    for(let jobComponent of this.jobsComponent) {
-      this.jobsStatusService.getJobData(jobComponent.name).subscribe(
+    for(let job of jobs) {
+      this.jobsStatusService.getJobData(job.url).subscribe(
         job => {
-          this.getJobExecData(job, jobComponent);
+          if(job.buildable === undefined){
+            this.createJobData(job.jobs);
+          }else {
+            if (job.lastBuild.url !== undefined) {
+              let jobModel = new JobModel(job.name, job.url);
+              jobModel.urlJobExecution = job.lastBuild.url;
+              this.jobsModel.push(jobModel);
+              this.getJobExecData(jobModel);
+            }
+          }
         },
         error => console.log(error)
       );
     }
   }
 
-  getJobExecData(job: any, jobComponent: JobComponent){
-    jobComponent.lastExecNumber = job.lastBuild.number;
-    this.jobsStatusService.getJobExecData(jobComponent.name, jobComponent.lastExecNumber).subscribe(
+  /**
+   *
+   * @param job
+   * @param jobModel
+   */
+  getJobExecData(jobModel: JobModel){
+    this.jobsStatusService.getJobExecData(jobModel.urlJobExecution).subscribe(
       jobExecution =>{
-        this.addJobExecData(jobExecution, jobComponent)
+        this.addJobExecData(jobExecution, jobModel)
       },
       error => console.log(error)
     );
   }
 
-  addJobExecData(jobExecution: any, jobComponent: JobComponent){
-    //TODO Delete this line in the future console.log("EN CONSTRUCCIÓN: "+ jobExecution.building);
-    jobComponent.lastExecTime = jobExecution.duration;
-    jobComponent.result = jobExecution.result;
-    jobComponent.timestamp = jobExecution.timestamp;
-    jobComponent.displayLastExecNumber = jobExecution.displayName;
+  /**
+   *
+   * @param jobExecution
+   * @param jobModel
+   */
+  addJobExecData(jobExecution: any, jobModel: JobModel){
+    jobModel.lastExecTime = jobExecution.duration;
+    jobModel.result = jobExecution.result;
+    jobModel.timestamp = jobExecution.timestamp;
+    jobModel.displayLastExecNumber = jobExecution.displayName;
   }
 
 }

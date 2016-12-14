@@ -4,15 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
-import { JobsBasicViewComponent } from './JobsBasicView/jobsBasicView.component';
-import { JobsStatusService } from './JobsBasicView/jobsBasicView.service';
+import { JobsBasicViewComponent } from './jobsBasicView/jobsBasicView.component';
+import { JobsStatusService } from './jobsBasicView/jobsBasicView.service';
 import { AppService } from './app.service';
+import { JobComponent } from './job/job.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    JobsBasicViewComponent
+    JobsBasicViewComponent,
+    JobComponent
   ],
   imports: [
     BrowserModule,
