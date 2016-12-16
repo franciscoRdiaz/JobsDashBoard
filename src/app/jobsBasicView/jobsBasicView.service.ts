@@ -29,12 +29,22 @@ export class JobsStatusService {
   }
 
 
-  getJobsData(){
-    this.invokedUrl = environment.jenkinsUrl + this.endInitialUrl;
+  /**
+   *
+   * @returns {Observable<R>}
+   */
+  getJobsData(urlFolderOfJobs:string){
+    if(urlFolderOfJobs === undefined){
+      this.invokedUrl = environment.jenkinsUrl + this.endInitialUrl + "?tree=jobs[name,url,buildable,lastBuild[*]]";
+    }else{
+      this.invokedUrl = urlFolderOfJobs + this.endInitialUrl + "?tree=jobs[name,url,buildable,lastBuild[*]]";
+    }
+
     return this.http.post(this.invokedUrl, undefined, this.resquestOptions).map(
       response => this.extractDataJobs(response)
     )
   }
+
 
   getJobData(jobUrl:string){
     this.invokedUrl = jobUrl + this.endInitialUrl;

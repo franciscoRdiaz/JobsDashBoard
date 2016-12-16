@@ -6,6 +6,7 @@ import { JobsStatusService } from './jobsBasicView.service';
 import { OnInit } from '@angular/core';
 import {JobComponent} from '../job/job.component';
 import { JobModel } from '../job/job.model';
+import { JobsBasicViewConfig } from './jobsBasicViewConfig';
 
 @Component({
   selector: 'jobsBasicView',
@@ -15,9 +16,8 @@ import { JobModel } from '../job/job.model';
 
 export class JobsBasicViewComponent implements OnInit{
 
-
-  //private jobsComponent: JobComponent[] = [];
   private jobsModel: JobModel[] = [];
+  viewConfig: JobsBasicViewConfig;
   jobNamesTitle: string = "Jobs";
 
   constructor(private jobsStatusService: JobsStatusService){}
@@ -27,17 +27,21 @@ export class JobsBasicViewComponent implements OnInit{
    */
   ngOnInit(){
     //this.getJobsStatus();
+    this.viewConfig = new JobsBasicViewConfig();
   }
 
   public initLoadJobsStatus(){
-    this.getJobsStatus();
+    this.getJobsStatus(undefined);
   }
   /**
-   * Starts the initial built of the Dashboard
+   * Loads jobs from root or a folder
    */
-  getJobsStatus(){
+  getJobsStatus(urlFolderOfJobs:string){
+    if (urlFolderOfJobs === undefined){
+      this.jobsModel = [];
+    }
 
-    this.jobsStatusService.getJobsData().subscribe(
+    this.jobsStatusService.getJobsData(urlFolderOfJobs).subscribe(
       //names => this.jobs = names,
       jobs => {this.createJobData(jobs)
       },
@@ -45,60 +49,39 @@ export class JobsBasicViewComponent implements OnInit{
     );
   }
 
+
   /**
-   * Orchestrates the information retrieval to build jobs object
+   * Builds and fills jobs object
    * @param jobs
    */
   createJobData(jobs: any[]){
 
     console.log("Create job data:");
+
     for(let job of jobs){
       console.log("       "+job.url);
+      if(job.buildable === undefined){
+        //this.createJobData(job.jobs);
+        this.getJobsStatus(job.url);
+      }else {
+        if (job.lastBuild !== null) {
+          let jobModel = new JobModel(job.name, job.url);
+          jobModel.urlJobExecution = job.lastBuild.url;
+          jobModel.lastExecTime = job.lastBuild.duration;
+          jobModel.result = job.lastBuild.result;
+          jobModel.timestamp = job.lastBuild.timestamp;
+          jobModel.displayLastExecNumber = job.lastBuild.displayName;
+          jobModel.setStatusClass();
+          //this.getJobExecData(jobModel);
+          this.jobsModel.push(jobModel);
+        }
+      }
     }
 
-    for(let job of jobs) {
-      this.jobsStatusService.getJobData(job.url).subscribe(
-        job => {
-          if(job.buildable === undefined){
-            this.createJobData(job.jobs);
-          }else {
-            if (job.lastBuild.url !== undefined) {
-              let jobModel = new JobModel(job.name, job.url);
-              jobModel.urlJobExecution = job.lastBuild.url;
-              this.jobsModel.push(jobModel);
-              this.getJobExecData(jobModel);
-            }
-          }
-        },
-        error => console.log(error)
-      );
-    }
+
   }
 
-  /**
-   *
-   * @param job
-   * @param jobModel
-   */
-  getJobExecData(jobModel: JobModel){
-    this.jobsStatusService.getJobExecData(jobModel.urlJobExecution).subscribe(
-      jobExecution =>{
-        this.addJobExecData(jobExecution, jobModel)
-      },
-      error => console.log(error)
-    );
+  setColumnsLayout(){
+    this.viewConfig.classColumn = "columns-"+this.viewConfig.numColSelected;
   }
-
-  /**
-   *
-   * @param jobExecution
-   * @param jobModel
-   */
-  addJobExecData(jobExecution: any, jobModel: JobModel){
-    jobModel.lastExecTime = jobExecution.duration;
-    jobModel.result = jobExecution.result;
-    jobModel.timestamp = jobExecution.timestamp;
-    jobModel.displayLastExecNumber = jobExecution.displayName;
-  }
-
 }

@@ -1,12 +1,20 @@
 <h2>{{jobNamesTitle}}</h2>
+<div>
+  <div><button  (click)="initLoadJobsStatus()">Carga inicial</button></div>
+  <div>
+    <label for="combNumColumns">Número de columnas:</label>
+    <select [(ngModel)]="viewConfig.numColSelected" class="form-control" id="combNumColumns" (change)="setColumnsLayout()" >
+    <option *ngFor="let numColumn of viewConfig.combNumColumns" [value]="numColumn">{{numColumn}}</option>
+  </select>
+  </div>
 
-<div><button  (click)="initLoadJobsStatus()">Carga inicial</button></div>
+  <ul id="widgets" [class] = "viewConfig.classColumn">
 
-  <ul id="jobscomponent">
-
-    <li *ngFor="let jobData of jobsModel">
+    <!--li *ngFor="let jobData of jobsModel" [class]="jobData.statusClass"-->
+    <li *ngFor="let jobData of jobsModel" [ngClass]="jobData.setClasses()">
 <!--job *ngFor="let jobData of jobsModel" [jobModel]="jobData" ></job-->
       <job  [jobModel]="jobData" ></job>
     </li>
   </ul>
 
+</div>

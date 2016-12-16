@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 })
 
 export class AppComponent implements OnInit{
-  title = 'Prototype 1 Status Jobs';
+  title = 'Monitor Pro v0.1';
 
   constructor( private appService: AppService){}
 
