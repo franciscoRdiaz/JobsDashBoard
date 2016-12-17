@@ -11,11 +11,9 @@ import 'rxjs/Rx';
 @Injectable()
 export class JobsStatusService {
 
-  private jobNames: string[] = [];
   private headers = new Headers({});
   private endInitialUrl: string = "api/json";
-  private endExecUrl: string = "?tree=builds[url]{0}";
-  private bodyUrl: string = "";
+  private endJobsDataUrl: string = "?tree=jobs[name,url,buildable,lastBuild[*]]";
   private invokedUrl: string;
   private resquestOptions: RequestOptions;
 
@@ -35,9 +33,9 @@ export class JobsStatusService {
    */
   getJobsData(urlFolderOfJobs:string){
     if(urlFolderOfJobs === undefined){
-      this.invokedUrl = environment.jenkinsUrl + this.endInitialUrl + "?tree=jobs[name,url,buildable,lastBuild[*]]";
+      this.invokedUrl = environment.jenkinsUrl + this.endInitialUrl + this.endJobsDataUrl;
     }else{
-      this.invokedUrl = urlFolderOfJobs + this.endInitialUrl + "?tree=jobs[name,url,buildable,lastBuild[*]]";
+      this.invokedUrl = urlFolderOfJobs + this.endInitialUrl + this.endJobsDataUrl;
     }
 
     return this.http.post(this.invokedUrl, undefined, this.resquestOptions).map(

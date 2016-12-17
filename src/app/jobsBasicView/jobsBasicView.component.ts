@@ -4,7 +4,6 @@
 import { Component } from '@angular/core';
 import { JobsStatusService } from './jobsBasicView.service';
 import { OnInit } from '@angular/core';
-import {JobComponent} from '../job/job.component';
 import { JobModel } from '../job/job.model';
 import { JobsBasicViewConfig } from './jobsBasicViewConfig';
 
@@ -18,15 +17,13 @@ export class JobsBasicViewComponent implements OnInit{
 
   private jobsModel: JobModel[] = [];
   viewConfig: JobsBasicViewConfig;
-  jobNamesTitle: string = "Jobs";
 
   constructor(private jobsStatusService: JobsStatusService){}
 
   /**
-   * Initial Dashboard's load.
+   * Initialize the component. Load the initial configuration
    */
   ngOnInit(){
-    //this.getJobsStatus();
     this.viewConfig = new JobsBasicViewConfig();
   }
 
@@ -42,13 +39,11 @@ export class JobsBasicViewComponent implements OnInit{
     }
 
     this.jobsStatusService.getJobsData(urlFolderOfJobs).subscribe(
-      //names => this.jobs = names,
       jobs => {this.createJobData(jobs)
       },
       error => console.log("No hay jobs")
     );
   }
-
 
   /**
    * Builds and fills jobs object
@@ -61,7 +56,6 @@ export class JobsBasicViewComponent implements OnInit{
     for(let job of jobs){
       console.log("       "+job.url);
       if(job.buildable === undefined){
-        //this.createJobData(job.jobs);
         this.getJobsStatus(job.url);
       }else {
         if (job.lastBuild !== null) {
@@ -77,10 +71,11 @@ export class JobsBasicViewComponent implements OnInit{
         }
       }
     }
-
-
   }
 
+  /**
+   * Sets the number of columns to the view
+   */
   setColumnsLayout(){
     this.viewConfig.classColumn = "columns-"+this.viewConfig.numColSelected;
   }
