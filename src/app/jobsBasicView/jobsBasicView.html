@@ -1,11 +1,22 @@
-<h2>{{jobNamesTitle}}</h2>
+<h2>Vista: {{titleOfViewDisplay}}</h2>
 <div>
-  <div><button  (click)="initLoadJobsStatus()">Carga inicial</button></div>
+  <div>
+    <label for="combViewSelction">Selecciona vista:</label>
+    <select [(ngModel)]="jobsViewSelected" class="form-control" id="combViewSelction" (change)="loadViewSelected()" >
+      <option *ngFor="let view of views" [selected]="view.name == jobsViewSelected.name" [disabled]="view.name == jobsViewSelected.name" [ngValue]="view">{{view.name}}</option>
+    </select>
+  </div>
+  <!--div><button  (click)="initLoadJobsStatus()">Carga inicial</button></div-->
   <div>
     <label for="combNumColumns">Número de columnas:</label>
     <select [(ngModel)]="viewConfig.numColSelected" class="form-control" id="combNumColumns" (change)="setColumnsLayout()" >
     <option *ngFor="let numColumn of viewConfig.combNumColumns" [value]="numColumn">{{numColumn}}</option>
-  </select>
+    </select>
+  </div>
+
+  <div>
+    <label for="inputPollInterval">Polling:</label>
+    <input type="number" [(ngModel)]="viewConfig.pollingIntervalInMin" id="inputPollInterval" (change)="setPollingInterval()">
   </div>
 
   <ul id="widgets" [class] = "viewConfig.classColumn">

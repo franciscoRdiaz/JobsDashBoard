@@ -14,6 +14,7 @@ export class JobsStatusService {
   private headers = new Headers({});
   private endInitialUrl: string = "api/json";
   private endJobsDataUrl: string = "?tree=jobs[name,url,buildable,lastBuild[*]]";
+  private endViewsUrl: string = "?tree=views[url,name],primaryView[url,name]";
   private invokedUrl: string;
   private resquestOptions: RequestOptions;
 
@@ -26,6 +27,15 @@ export class JobsStatusService {
     })
   }
 
+  getViews(){
+
+    let invokeUrl = environment.jenkinsUrl + this.endInitialUrl + this.endViewsUrl;
+    console.log("URL del api de las vistas: " + invokeUrl);
+
+    return this.http.post(invokeUrl, undefined, this.resquestOptions).map(
+      response => response.json()
+    )
+  }
 
   /**
    *
@@ -42,7 +52,6 @@ export class JobsStatusService {
       response => this.extractDataJobs(response)
     )
   }
-
 
   getJobData(jobUrl:string){
     this.invokedUrl = jobUrl + this.endInitialUrl;

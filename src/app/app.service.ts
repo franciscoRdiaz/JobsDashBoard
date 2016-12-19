@@ -18,9 +18,15 @@ export class AppService {
   })
 
   constructor(private http: Http) {
+    this.headers.append("Access-Control-Allow-Credentials", "true");
+    this.headers.append("Authorization", "Basic " + btoa(environment.jenkinsUser + ":" + environment.jenkinsPass));
+    this.headers.append("Content-Type","application/json");
+    this.resquestOptions = new RequestOptions({
+      headers: this.headers,
+    })
   }
 
-  getAuthentication() {
+  /**getAuthentication() {
 
     let url = "https://ci.kurento.org/jenkins/login";
 
@@ -34,7 +40,7 @@ export class AppService {
         data => localStorage.setItem('id_token', data.id_token),
         error => console.log("ERRORRR"+error)
       );
-  }
+  }*/
 }
 
 

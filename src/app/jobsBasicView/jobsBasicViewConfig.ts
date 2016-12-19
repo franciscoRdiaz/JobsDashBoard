@@ -6,4 +6,7 @@ export class JobsBasicViewConfig{
   numColSelected: number = 1;
   combNumColumns: number [] = [1,2,3,4,5,6,7,8];
   classColumn: string = "columns-1";
+  pollingIntervalInMin: number = 5;
+  pollingIntervalInMilSecond: number = 300000;
+
 }
