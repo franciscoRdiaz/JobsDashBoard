@@ -5,9 +5,7 @@ import { HttpModule, JsonpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { JobsBasicViewComponent } from './jobsBasicView/jobsBasicView.component';
-import { JobsStatusService } from './jobsBasicView/jobsBasicView.service';
 import { JenkinsService } from './commons/jenkinsService.service';
-import { AppService } from './app.service';
 import { JobComponent } from './job/job.component';
 import {JobsBasicViewMenuConfig} from "./jobsBasicViewMenuConfig/jobsViewMenuConfig.component";
 
@@ -24,7 +22,7 @@ import {JobsBasicViewMenuConfig} from "./jobsBasicViewMenuConfig/jobsViewMenuCon
     HttpModule,
     JsonpModule
   ],
-  providers: [ JobsStatusService, AppService, JenkinsService ],
+  providers: [ JenkinsService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

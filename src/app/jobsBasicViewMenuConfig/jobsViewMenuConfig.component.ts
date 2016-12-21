@@ -1,7 +1,7 @@
 /**
  * Created by frdiaz on 20/12/2016.
  */
-import { Component, Output, EventEmitter } from '@angular/core';
+import {Component, Output, EventEmitter, Input, OnInit} from '@angular/core';
 //import { JobsBasicViewConfig } from '../jobsBasicView/jobsBasicViewConfig';
 import { JobsBasicViewConfig } from './jobsViewMenuConfig.model';
 import {JenkinsService} from "../commons/jenkinsService.service";
@@ -12,7 +12,7 @@ import { JobView } from '../commons/jobView';
   templateUrl: 'jobsViewMenuConfig.component.html'
 })
 
-export class JobsBasicViewMenuConfig {
+export class JobsBasicViewMenuConfig implements OnInit {
 
   viewConfig: JobsBasicViewConfig;
 
@@ -20,14 +20,17 @@ export class JobsBasicViewMenuConfig {
   views: JobView[] = [];
   jobsViewSelected: JobView;
 
+  @Input()
+  private urlJenkins: string;
+
   @Output()
   onSelectedView = new EventEmitter<JobView>();
 
   @Output()
-  onSelectNumColumn = new EventEmitter<JobsBasicViewConfig>();
+  onSelectNumColumn = new EventEmitter<number>();
 
   @Output()
-  onSetPollingInterval = new EventEmitter<JobsBasicViewConfig>();
+  onSetPollingInterval = new EventEmitter<number>();
 
 
   constructor(private jenkinsService: JenkinsService){}
@@ -37,7 +40,7 @@ export class JobsBasicViewMenuConfig {
    */
   ngOnInit(){
     this.viewConfig = new JobsBasicViewConfig();
-    this.jenkinsService.getViews().subscribe(
+    this.jenkinsService.getViews(this.urlJenkins).subscribe(
       views => {
 
         for(let view of views.views){
@@ -46,6 +49,7 @@ export class JobsBasicViewMenuConfig {
             this.jobsViewSelected = view;
           }
         }
+        this.onSelectedView.next(this.jobsViewSelected);
       },
       error => console.log(error)
     );
@@ -56,11 +60,11 @@ export class JobsBasicViewMenuConfig {
   }
 
   setColumnsLayout(){
-    this.onSelectNumColumn.next(this.viewConfig);
+    this.onSelectNumColumn.next(this.viewConfig.numColSelected);
   }
 
   onSubmit(){
-    this.onSetPollingInterval.next(this.viewConfig);
+    this.onSetPollingInterval.next(this.viewConfig.pollingIntervalInMin);
     console.log("Se cambia el valor del polling: "+ this.viewConfig.pollingIntervalInMin);
   }
 }

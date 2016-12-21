@@ -1,8 +1,7 @@
 /**
  * Created by frdiaz on 02/12/2016.
  */
-import { Component } from '@angular/core';
-import { JobsStatusService } from './jobsBasicView.service';
+import {Component, Input} from '@angular/core';
 import { OnInit } from '@angular/core';
 import { JobModel } from '../job/job.model';
 import { JobsBasicViewConfig } from './jobsBasicViewConfig';
@@ -10,6 +9,7 @@ import { JobBasicViewModel } from './jobsBasicView.model';
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
 import {JobView} from "../commons/jobView";
+import {JenkinsService} from "../commons/jenkinsService.service";
 
 @Component({
   selector: 'jobsBasicView',
@@ -19,6 +19,9 @@ import {JobView} from "../commons/jobView";
 
 export class JobsBasicViewComponent implements OnInit{
 
+  @Input()
+  private urlJenkins:string;
+
   private jobsModel: JobModel[] = [];
   viewConfig: JobsBasicViewConfig;
   views: JobBasicViewModel[] = [];
@@ -27,29 +30,14 @@ export class JobsBasicViewComponent implements OnInit{
   timer;
   subscription;
 
-  constructor(private jobsStatusService: JobsStatusService){}
+  constructor(private jenkinsService: JenkinsService){}
 
   /**
    * Initialize the component. Load the initial configuration
    */
   ngOnInit(){
+    console.log("URL JENKINS FROM JOBSBASICVIEW:"+this.urlJenkins);
     this.viewConfig = new JobsBasicViewConfig();
-    this.jobsStatusService.getViews().subscribe(
-      views => {
-
-        for(let view of views.views){
-          this.views.push(view);
-          if (view.name === views.primaryView.name){
-            this.jobsViewSelected = view;
-          }
-        }
-
-        this.titleOfViewDisplay = this.jobsViewSelected.name;
-
-        this.initLoadJobsStatus(this.jobsViewSelected.url);
-      },
-      error => console.log(error)
-    );
   }
 
   public initLoadJobsStatus(url:string) {
@@ -70,7 +58,7 @@ export class JobsBasicViewComponent implements OnInit{
    */
   getJobsStatus(urlFolderOfJobs:string){
 
-    this.jobsStatusService.getJobsData(urlFolderOfJobs)
+    this.jenkinsService.getJobsData(urlFolderOfJobs)
       .subscribe(jobs => this.createJobData(jobs),
         error => console.log("No hay jobs")
       );
@@ -105,8 +93,8 @@ export class JobsBasicViewComponent implements OnInit{
   /**
    * Sets the number of columns to the view
    */
-  setColumnsLayout(viewConfig: JobsBasicViewConfig){
-    this.viewConfig.classColumn = "columns-"+viewConfig.numColSelected;
+  setColumnsLayout(numColumnsSelected: number){
+    this.viewConfig.classColumn = "columns-"+ numColumnsSelected;
 
   }
 
@@ -123,8 +111,8 @@ export class JobsBasicViewComponent implements OnInit{
   /**
    * Changes value of polling interval and data reload
    */
-  setPollingInterval(viewConfig: JobsBasicViewConfig){
-    this.viewConfig.pollingIntervalInMilSecond = viewConfig === undefined ? this.viewConfig.pollingIntervalInMin : viewConfig.pollingIntervalInMin * 60 * 1000;
+  setPollingInterval(pollingIntervalInMin: number){
+    this.viewConfig.pollingIntervalInMilSecond = pollingIntervalInMin * 60 * 1000;
     this.initLoadJobsStatus(this.jobsViewSelected.url);
   }
 

@@ -6,8 +6,6 @@ import { Http, Response, Headers, RequestOptions } from "@angular/http";
 import { environment } from "../../environments/environment";
 import 'rxjs/Rx';
 
-
-
 @Injectable()
 export class JenkinsService {
 
@@ -19,17 +17,27 @@ export class JenkinsService {
   private resquestOptions: RequestOptions;
 
   constructor(private http: Http){
-    this.headers.append("Access-Control-Allow-Credentials", "true");
-    this.headers.append("Authorization", "Basic " + btoa(environment.jenkinsUser + ":" + environment.jenkinsPass));
+
+  }
+
+  configHeaders(authentication: boolean){
+
+    if(authentication){
+      console.log("With authentication");
+      this.headers.append("Access-Control-Allow-Credentials", "true");
+      this.headers.append("Authorization", "Basic " + btoa(environment.jenkinsUser + ":" + environment.jenkinsPass));
+    }
     this.headers.append("Content-Type","application/json");
     this.resquestOptions = new RequestOptions({
       headers: this.headers,
     })
   }
 
-  getViews(){
+  getViews(urlJenkins:string){
 
-    let invokeUrl = environment.jenkinsUrl + this.endInitialUrl + this.endViewsUrl;
+    let invokeUrl = (urlJenkins === null && urlJenkins === undefined) ? urlJenkins : environment.jenkinsUrl;
+    invokeUrl = invokeUrl + this.endInitialUrl + this.endViewsUrl;
+    this.configHeaders((urlJenkins === null || urlJenkins === undefined));
     console.log("URL del api de las vistas: " + invokeUrl);
 
     return this.http.post(invokeUrl, undefined, this.resquestOptions).map(
@@ -53,21 +61,7 @@ export class JenkinsService {
     )
   }
 
-  getJobData(jobUrl:string){
-    this.invokedUrl = jobUrl + this.endInitialUrl;
-    return this.http.post(this.invokedUrl, undefined, this.resquestOptions).map(
-      response => this.extractDataJob(response)
-    )
-  }
-
-  getJobExecData(jobUrl:string){
-    this.invokedUrl = jobUrl + this.endInitialUrl;
-    return this.http.post(this.invokedUrl, undefined, this.resquestOptions).map(
-      response => this.extractDataJob(response)
-    )
-  }
-
-  private extractDataJobs(response: Response){
+ private extractDataJobs(response: Response){
     return response.json().jobs;
   }
 
