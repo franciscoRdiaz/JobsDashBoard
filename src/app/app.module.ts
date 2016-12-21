@@ -6,15 +6,17 @@ import { HttpModule, JsonpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { JobsBasicViewComponent } from './jobsBasicView/jobsBasicView.component';
 import { JobsStatusService } from './jobsBasicView/jobsBasicView.service';
+import { JenkinsService } from './commons/jenkinsService.service';
 import { AppService } from './app.service';
 import { JobComponent } from './job/job.component';
-
+import {JobsBasicViewMenuConfig} from "./jobsBasicViewMenuConfig/jobsViewMenuConfig.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     JobsBasicViewComponent,
-    JobComponent
+    JobComponent,
+    JobsBasicViewMenuConfig
   ],
   imports: [
     BrowserModule,
@@ -22,7 +24,7 @@ import { JobComponent } from './job/job.component';
     HttpModule,
     JsonpModule
   ],
-  providers: [ JobsStatusService, AppService ],
+  providers: [ JobsStatusService, AppService, JenkinsService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

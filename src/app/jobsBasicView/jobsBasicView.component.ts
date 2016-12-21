@@ -6,13 +6,14 @@ import { JobsStatusService } from './jobsBasicView.service';
 import { OnInit } from '@angular/core';
 import { JobModel } from '../job/job.model';
 import { JobsBasicViewConfig } from './jobsBasicViewConfig';
-import { JobBasicViewModel } from './jobBasicView.model';
+import { JobBasicViewModel } from './jobsBasicView.model';
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
+import {JobView} from "../commons/jobView";
 
 @Component({
   selector: 'jobsBasicView',
-  templateUrl: './jobsBasicView.html',
+  templateUrl: 'jobsBasicView.component.html',
   styleUrls: ['../app.component.css']
 })
 
@@ -37,12 +38,14 @@ export class JobsBasicViewComponent implements OnInit{
       views => {
 
         for(let view of views.views){
-          let jobBasicViewModel = view;
-          this.views.push(jobBasicViewModel);
+          this.views.push(view);
+          if (view.name === views.primaryView.name){
+            this.jobsViewSelected = view;
+          }
         }
 
-        this.jobsViewSelected = views.primaryView;
         this.titleOfViewDisplay = this.jobsViewSelected.name;
+
         this.initLoadJobsStatus(this.jobsViewSelected.url);
       },
       error => console.log(error)
@@ -79,22 +82,21 @@ export class JobsBasicViewComponent implements OnInit{
    */
   createJobData(jobs: any[]){
 
-    console.log("Create job data:");
-
     for(let job of jobs){
-      //console.log("       "+job.url);
-      if(job.buildable === undefined){
-        this.getJobsStatus(job.url);
-      }else {
-        if (job.lastBuild !== null) {
-          let jobModel = new JobModel(job.name, job.url);
-          jobModel.urlJobExecution = job.lastBuild.url;
-          jobModel.lastExecTime = job.lastBuild.duration;
-          jobModel.result = job.lastBuild.result;
-          jobModel.timestamp = job.lastBuild.timestamp;
-          jobModel.displayLastExecNumber = job.lastBuild.displayName;
-          jobModel.setStatusClass();
-          this.jobsModel.push(jobModel);
+      if(job !== null){
+        if(job.buildable === undefined){
+          this.getJobsStatus(job.url);
+        }else {
+          if (job.lastBuild !== null) {
+            let jobModel = new JobModel(job.name, job.url);
+            jobModel.urlJobExecution = job.lastBuild.url;
+            jobModel.lastExecTime = job.lastBuild.duration;
+            jobModel.result = job.lastBuild.result;
+            jobModel.timestamp = job.lastBuild.timestamp;
+            jobModel.displayLastExecNumber = job.lastBuild.displayName;
+            jobModel.setStatusClass();
+            this.jobsModel.push(jobModel);
+          }
         }
       }
     }
@@ -103,23 +105,27 @@ export class JobsBasicViewComponent implements OnInit{
   /**
    * Sets the number of columns to the view
    */
-  setColumnsLayout(){
-    this.viewConfig.classColumn = "columns-"+this.viewConfig.numColSelected;
+  setColumnsLayout(viewConfig: JobsBasicViewConfig){
+    this.viewConfig.classColumn = "columns-"+viewConfig.numColSelected;
+
   }
 
   /**
    * Loads data of selected view.
    */
-  loadViewSelected(){
-    this.titleOfViewDisplay = this.jobsViewSelected.name;
-    this.initLoadJobsStatus(this.jobsViewSelected.url);
+  loadViewSelected(jobsViewSelected: JobView){
+    this.titleOfViewDisplay = jobsViewSelected.name;
+    this.initLoadJobsStatus(jobsViewSelected.url);
+    this.jobsViewSelected = jobsViewSelected;
+
   }
 
   /**
    * Changes value of polling interval and data reload
    */
-  setPollingInterval(){
-    this.viewConfig.pollingIntervalInMilSecond = this.viewConfig.pollingIntervalInMin * 60 * 1000;
+  setPollingInterval(viewConfig: JobsBasicViewConfig){
+    this.viewConfig.pollingIntervalInMilSecond = viewConfig === undefined ? this.viewConfig.pollingIntervalInMin : viewConfig.pollingIntervalInMin * 60 * 1000;
     this.initLoadJobsStatus(this.jobsViewSelected.url);
   }
+
 }

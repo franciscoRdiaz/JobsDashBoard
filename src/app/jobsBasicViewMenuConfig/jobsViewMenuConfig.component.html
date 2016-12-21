@@ -1,0 +1,29 @@
+  <nav id="menuLateral">
+    <section [class.showSettings]="toggleSettings">
+      <input id="settings-toggle" type="checkbox" class="settings" [(ngModel)]="toggleSettings"/>
+      <label for="settings-toggle" title="Configure Build Monitor Settings">Settings</label>
+
+      <ul>
+        <li class="settings-option">
+          <label for="combViewSelction">Selecciona vista:</label>
+          <select [(ngModel)]="jobsViewSelected" class="form-control" id="combViewSelction" name="combViewSelction" (ngModelChange)="loadViewSelected()" >
+            <option *ngFor="let view of views" [selected]="view.name == jobsViewSelected.name" [disabled]="view.name == jobsViewSelected.name" [ngValue]="view">{{view.name}}</option>
+          </select>
+        </li>
+        <li class="settings-option">
+          <label for="combNumColumns">Número de columnas:</label>
+          <select [(ngModel)]="viewConfig.numColSelected" class="form-control" id="combNumColumns" name="combNumColumns" (change)="setColumnsLayout()" >
+            <option *ngFor="let numColumn of viewConfig.combNumColumns" [value]="numColumn">{{numColumn}}</option>
+          </select>
+        </li>
+        <li class="settings-option">
+          <form (ngSubmit)="onSubmit()">
+            <label for="inputPollInterval">Polling:</label>
+            <input type="number" [(ngModel)]="viewConfig.pollingIntervalInMin" id="inputPollInterval" name="inputPollInterval"  min="1" max="1440">
+            <input type="submit">
+          </form>
+        </li>
+      </ul>
+    </section>
+  </nav>
+

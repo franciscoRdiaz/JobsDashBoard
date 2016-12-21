@@ -6,8 +6,10 @@ import { Http, Response, Headers, RequestOptions } from "@angular/http";
 import { environment } from "../../environments/environment";
 import 'rxjs/Rx';
 
+
+
 @Injectable()
-export class JobsStatusService {
+export class JenkinsService {
 
   private headers = new Headers({});
   private endInitialUrl: string = "api/json";

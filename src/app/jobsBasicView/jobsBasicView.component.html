@@ -1,0 +1,13 @@
+<h2>Vista: {{titleOfViewDisplay}}</h2>
+<header>
+  <menu-config (onSelectedView)="loadViewSelected($event)" (onSelectNumColumn)="setColumnsLayout($event)" (onSetPollingInterval)="setPollingInterval($event)">Menú de Configuración</menu-config>
+</header>
+
+<div>
+  <!-- Jobs List -->
+  <ul id="widgets" [class] = "viewConfig.classColumn">
+    <li *ngFor="let jobData of jobsModel" [ngClass]="jobData.setClasses()">
+      <job  [jobModel]="jobData" ></job>
+    </li>
+  </ul>
+</div>
