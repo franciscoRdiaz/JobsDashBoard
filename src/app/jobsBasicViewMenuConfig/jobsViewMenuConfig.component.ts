@@ -6,6 +6,8 @@ import {Component, Output, EventEmitter, Input, OnInit} from '@angular/core';
 import { JobsBasicViewConfig } from './jobsViewMenuConfig.model';
 import {JenkinsService} from "../commons/jenkinsService.service";
 import { JobView } from '../commons/jobView';
+import {FilteredJobsGroupParam} from "../commons/filteredJobsGroupParam";
+
 
 @Component({
   selector: 'menu-config',
@@ -31,6 +33,9 @@ export class JobsBasicViewMenuConfig implements OnInit {
 
   @Output()
   onSetPollingInterval = new EventEmitter<number>();
+
+  @Output()
+  onChangeFilterByJobsGrupo = new EventEmitter<FilteredJobsGroupParam>();
 
 
   constructor(private jenkinsService: JenkinsService){}
@@ -63,8 +68,26 @@ export class JobsBasicViewMenuConfig implements OnInit {
     this.onSelectNumColumn.next(this.viewConfig.numColSelected);
   }
 
+  selectFilterByJobsGroupParam(){
+    let filteredJobsGroupParam: FilteredJobsGroupParam = new FilteredJobsGroupParam();
+    filteredJobsGroupParam.checkedByJogsGroupParam = this.viewConfig.checkedByJogsGroupParam;
+    filteredJobsGroupParam.jobsGroupParamValue = this.viewConfig.jobsGroupParamValue;
+
+    if((this.viewConfig.checkedByJogsGroupParam && this.viewConfig.jobsGroupParamValue !== undefined && this.viewConfig.jobsGroupParamValue !== "")
+      || !this.viewConfig.checkedByJogsGroupParam){
+      filteredJobsGroupParam.checkedByJogsGroupParam=this.viewConfig.checkedByJogsGroupParam;
+      this.onChangeFilterByJobsGrupo.next(filteredJobsGroupParam);
+      console.log("Se filtra por Grupo de jobs");
+    }
+  }
+
+  changeJobsGroupName(){
+    this.selectFilterByJobsGroupParam();
+  }
+
   onSubmit(){
-    this.onSetPollingInterval.next(this.viewConfig.pollingIntervalInMin);
-    console.log("Se cambia el valor del polling: "+ this.viewConfig.pollingIntervalInMin);
+    this.jenkinsService.submitForm();
+    this.onSetPollingInterval.next(this.viewConfig.pollingIntervalInSec);
+    console.log("Change value of polling: "+ this.viewConfig.pollingIntervalInSec);
   }
 }

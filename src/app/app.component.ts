@@ -13,7 +13,6 @@ export class AppComponent {
 
   constructor(elm: ElementRef){
     this.urlJenkins = elm.nativeElement.getAttribute("urlJenkins");
-    console.log("Parámetro de entrada a la app:" + this.urlJenkins);
   }
 
 }

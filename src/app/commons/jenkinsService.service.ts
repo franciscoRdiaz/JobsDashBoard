@@ -11,7 +11,7 @@ export class JenkinsService {
 
   private headers = new Headers({});
   private endInitialUrl: string = "api/json";
-  private endJobsDataUrl: string = "?tree=jobs[name,url,buildable,lastBuild[*]]";
+  private endJobsDataUrl: string = "?tree=jobs[name,url,buildable,lastBuild[*,actions[parameters[*]]]]";
   private endViewsUrl: string = "?tree=views[url,name],primaryView[url,name]";
   private invokedUrl: string;
   private resquestOptions: RequestOptions;
@@ -35,7 +35,7 @@ export class JenkinsService {
 
   getViews(urlJenkins:string){
 
-    let invokeUrl = (urlJenkins === null && urlJenkins === undefined) ? urlJenkins : environment.jenkinsUrl;
+    let invokeUrl = (urlJenkins !== null && urlJenkins !== undefined) ? urlJenkins : environment.jenkinsUrl;
     invokeUrl = invokeUrl + this.endInitialUrl + this.endViewsUrl;
     this.configHeaders((urlJenkins === null || urlJenkins === undefined));
     console.log("URL del api de las vistas: " + invokeUrl);
@@ -61,13 +61,14 @@ export class JenkinsService {
     )
   }
 
- private extractDataJobs(response: Response){
+  private extractDataJobs(response: Response){
     return response.json().jobs;
   }
 
-
-  private extractDataJob(response: Response){
-    return response.json();
+  submitForm(){
+    console.log("Enviamos el formulario al servidor");
+    this.http.post("http://localhost:8080/monitor-pro/prove",undefined, undefined);
   }
+
 }
 

@@ -10,6 +10,7 @@ import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
 import {JobView} from "../commons/jobView";
 import {JenkinsService} from "../commons/jenkinsService.service";
+import {FilteredJobsGroupParam} from "../commons/filteredJobsGroupParam";
 
 @Component({
   selector: 'jobsBasicView',
@@ -26,9 +27,11 @@ export class JobsBasicViewComponent implements OnInit{
   viewConfig: JobsBasicViewConfig;
   views: JobBasicViewModel[] = [];
   jobsViewSelected: JobBasicViewModel;
-  titleOfViewDisplay: string ="No se ha seleccionado ninguna vista todavía.";
+  titleOfViewDisplay: string ="No view selected jet.";
   timer;
   subscription;
+  dynamicObjForGroupJobs= {};
+  listOfJobsGroupsNames: string[] = [];
 
   constructor(private jenkinsService: JenkinsService){}
 
@@ -36,12 +39,13 @@ export class JobsBasicViewComponent implements OnInit{
    * Initialize the component. Load the initial configuration
    */
   ngOnInit(){
-    console.log("URL JENKINS FROM JOBSBASICVIEW:"+this.urlJenkins);
     this.viewConfig = new JobsBasicViewConfig();
   }
 
   public initLoadJobsStatus(url:string) {
     this.jobsModel = [];
+    this.dynamicObjForGroupJobs = {};
+    this.listOfJobsGroupsNames = [];
     if (this.subscription !== undefined){
       this.subscription.unsubscribe();
     }
@@ -50,7 +54,9 @@ export class JobsBasicViewComponent implements OnInit{
     this.subscription = this.timer
       .subscribe(() => {
         this.jobsModel = [];
-      this.getJobsStatus(url);
+        this.dynamicObjForGroupJobs = {};
+        this.listOfJobsGroupsNames = [];
+        this.getJobsStatus(url);
     });
   }
   /**
@@ -60,7 +66,7 @@ export class JobsBasicViewComponent implements OnInit{
 
     this.jenkinsService.getJobsData(urlFolderOfJobs)
       .subscribe(jobs => this.createJobData(jobs),
-        error => console.log("No hay jobs")
+        error => console.log("There are't jobs.")
       );
   }
 
@@ -76,18 +82,108 @@ export class JobsBasicViewComponent implements OnInit{
           this.getJobsStatus(job.url);
         }else {
           if (job.lastBuild !== null) {
-            let jobModel = new JobModel(job.name, job.url);
-            jobModel.urlJobExecution = job.lastBuild.url;
-            jobModel.lastExecTime = job.lastBuild.duration;
-            jobModel.result = job.lastBuild.result;
-            jobModel.timestamp = job.lastBuild.timestamp;
-            jobModel.displayLastExecNumber = job.lastBuild.displayName;
-            jobModel.setStatusClass();
-            this.jobsModel.push(jobModel);
+            let validJob = true;
+            if (this.viewConfig.filteredJobsGroupParam!==undefined && this.viewConfig.filteredJobsGroupParam.checkedByJogsGroupParam){
+              validJob = this.passFilteredByJobsGroupParameter(job);
+            }
+            if (validJob){
+              this.addToDynamicObjForGroupJobs(job);
+            }
           }
         }
       }
     }
+    for(let group of this.listOfJobsGroupsNames){
+      if (group === "reminder"){
+        for (let job of this.dynamicObjForGroupJobs[group]){
+          let jobModel = new JobModel(job.name, job.url);
+          jobModel.urlJobExecution = job.lastBuild.url;
+          jobModel.lastExecTime = job.lastBuild.duration;
+          jobModel.result = job.lastBuild.result;
+          jobModel.timestamp = job.lastBuild.timestamp;
+          jobModel.displayLastExecNumber = job.lastBuild.displayName;
+          jobModel.setStatusClass();
+          this.jobsModel.push(jobModel);
+        }
+      }else{
+        let i = 0;
+        let principalJobModel: JobModel;
+        for (let job of this.dynamicObjForGroupJobs[group]){
+          let jobModel = new JobModel(job.name, job.url);
+          jobModel.urlJobExecution = job.lastBuild.url;
+          jobModel.lastExecTime = job.lastBuild.duration;
+          jobModel.result = job.lastBuild.result;
+          jobModel.timestamp = job.lastBuild.timestamp;
+          jobModel.displayLastExecNumber = job.lastBuild.displayName;
+          jobModel.setStatusClass();
+          if (i === 0){
+            jobModel.listDiferentsBuildsConfiguration = new Array<JobModel>();
+            this.jobsModel.push(jobModel);
+            principalJobModel = jobModel;
+          }else{
+            principalJobModel.listDiferentsBuildsConfiguration.push(job);
+          }
+          i++;
+        }
+      }
+    }
+  }
+
+  addToDynamicObjForGroupJobs(job: any){
+    for( let action of job.lastBuild.actions) {
+      if (action._class === undefined || action._class === 'hudson.model.ParametersAction') {
+
+        if (action.parameters !== undefined) {
+          for (let i = 0; i < action.parameters.length; i++) {
+            if (action.parameters[i].name === 'Jobs_Group') {
+              if (this.dynamicObjForGroupJobs[action.parameters[i].value] !== undefined) {
+                this.dynamicObjForGroupJobs[action.parameters[i].value].push(job);
+              } else {
+                this.listOfJobsGroupsNames.push(action.parameters[i].value);
+                this.dynamicObjForGroupJobs[action.parameters[i].value] = [job];
+              }
+              break;
+            } else {
+              if (i === action.parameters.length - 1) {
+                if (this.dynamicObjForGroupJobs["reminder"] !== undefined) {
+                  this.dynamicObjForGroupJobs["reminder"].push(job);
+                } else {
+                  this.listOfJobsGroupsNames.push("reminder");
+                  this.dynamicObjForGroupJobs["reminder"] = [job];
+                }
+              }
+            }
+          }
+        }else{
+          if (this.dynamicObjForGroupJobs["reminder"] !== undefined) {
+            this.dynamicObjForGroupJobs["reminder"].push(job);
+          } else {
+            this.listOfJobsGroupsNames.push("reminder");
+            this.dynamicObjForGroupJobs["reminder"] = [job];
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  passFilteredByJobsGroupParameter(job: any){
+
+    let pass: boolean = false;
+
+    for( let action of job.lastBuild.actions){
+      if(action._class === 'hudson.model.ParametersAction' ){
+        for(let parameter of action.parameters){
+          if (parameter.name === 'Jobs_Group' && parameter.value === this.viewConfig.filteredJobsGroupParam.jobsGroupParamValue){
+            console.log("Valor del parámetro Jobs_Group:"+ parameter.value);
+            pass = true;
+            break;
+          }
+        }
+        break;
+      }
+    }
+    return pass;
   }
 
   /**
@@ -105,14 +201,23 @@ export class JobsBasicViewComponent implements OnInit{
     this.titleOfViewDisplay = jobsViewSelected.name;
     this.initLoadJobsStatus(jobsViewSelected.url);
     this.jobsViewSelected = jobsViewSelected;
-
   }
 
   /**
    * Changes value of polling interval and data reload
    */
-  setPollingInterval(pollingIntervalInMin: number){
-    this.viewConfig.pollingIntervalInMilSecond = pollingIntervalInMin * 60 * 1000;
+  setPollingInterval(pollingIntervalInSec: number){
+    this.viewConfig.pollingIntervalInMilSecond = pollingIntervalInSec * 1000;
+    this.initLoadJobsStatus(this.jobsViewSelected.url);
+  }
+
+  /**
+   * Sets the flag value to filter jobs by JobsGroup parameter
+   * @param filtered
+   */
+  selectFilterByJobsGroupParam(filteredJobsGroupPara: FilteredJobsGroupParam){
+    console.log("Tratar filtrado activado.")
+    this.viewConfig.filteredJobsGroupParam = filteredJobsGroupPara;
     this.initLoadJobsStatus(this.jobsViewSelected.url);
   }
 

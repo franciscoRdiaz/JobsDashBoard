@@ -1,6 +1,6 @@
-<h2>Vista: {{titleOfViewDisplay}}</h2>
+<h2>View: {{titleOfViewDisplay}}</h2>
 <header>
-  <menu-config (onSelectedView)="loadViewSelected($event)" (onSelectNumColumn)="setColumnsLayout($event)" (onSetPollingInterval)="setPollingInterval($event)" [urlJenkins]="urlJenkins">Menú de Configuración</menu-config>
+  <menu-config (onSelectedView)="loadViewSelected($event)" (onSelectNumColumn)="setColumnsLayout($event)" (onSetPollingInterval)="setPollingInterval($event)" (onChangeFilterByJobsGrupo)="selectFilterByJobsGroupParam($event)" [urlJenkins]="urlJenkins">Configuration Menu</menu-config>
 </header>
 
 <div>
