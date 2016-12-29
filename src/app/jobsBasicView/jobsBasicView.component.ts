@@ -96,7 +96,9 @@ export class JobsBasicViewComponent implements OnInit{
     for(let group of this.listOfJobsGroupsNames){
       if (group === "reminder"){
         for (let job of this.dynamicObjForGroupJobs[group]){
-          let jobModel = new JobModel(job.name, job.url);
+          let jobModel = new JobModel();
+          jobModel.name = job.name;
+          jobModel.urlJob = job.url;
           jobModel.urlJobExecution = job.lastBuild.url;
           jobModel.lastExecTime = job.lastBuild.duration;
           jobModel.result = job.lastBuild.result;
@@ -109,7 +111,9 @@ export class JobsBasicViewComponent implements OnInit{
         let i = 0;
         let principalJobModel: JobModel;
         for (let job of this.dynamicObjForGroupJobs[group]){
-          let jobModel = new JobModel(job.name, job.url);
+          let jobModel = new JobModel();
+          jobModel.name = job.name;
+          jobModel.urlJob = job.url;
           jobModel.urlJobExecution = job.lastBuild.url;
           jobModel.lastExecTime = job.lastBuild.duration;
           jobModel.result = job.lastBuild.result;
@@ -117,14 +121,16 @@ export class JobsBasicViewComponent implements OnInit{
           jobModel.displayLastExecNumber = job.lastBuild.displayName;
           jobModel.setStatusClass();
           if (i === 0){
-            jobModel.listDiferentsBuildsConfiguration = new Array<JobModel>();
+            jobModel.listDifBuildsConfiguration = [];
             this.jobsModel.push(jobModel);
             principalJobModel = jobModel;
           }else{
-            principalJobModel.listDiferentsBuildsConfiguration.push(job);
+
+            principalJobModel.listDifBuildsConfiguration.push(jobModel);
           }
           i++;
         }
+        //this.jobsModel.push(principalJobModel);
       }
     }
   }
