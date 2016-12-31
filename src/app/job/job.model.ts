@@ -1,18 +1,10 @@
 /**
- * Created by frdiaz on 14/12/2016.
+ * Created by frdiaz on 30/12/2016.
  */
-
-export class JobModel {
-
-  public urlJobExecution: string;
-  public lastExecTime: number;
-  public displayLastExecNumber: string;
+export class Job{
+  name:string;
   public result: string;
   public statusClass: string = "basic project widget unknown";
-  public timestamp: number;
-  public listDifBuildsConfiguration: JobModel[];
-  public name: string;
-  public urlJob: string;
 
   setStatusClass(){
     switch (this.result){
@@ -49,4 +41,5 @@ export class JobModel {
       disabled: this.statusClass === "disabled"
     };
   }
+
 }

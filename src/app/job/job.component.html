@@ -1,18 +1,27 @@
 <header>
   <h2><a title="{{jobModel.name}}" href="{{jobModel.urlJob}}">{{jobModel.name}}</a> </h2>
 </header>
-<div class="slots">
-<h1><a href="{{jobModel.urlJobExecution}}">{{jobModel.displayLastExecNumber}}</a>Configurations:<a  name="build" id="build" *ngFor="let jobBuild of jobModel.listDifBuildsConfiguration" href="{{jobBuild.urlJobExecution}}">{{jobBuild.displayLastExecNumber}}
-  <span [ngSwitch]="jobBuild.result">
-    <span *ngSwitchCase="'SUCCESS'">-V</span>
-    <span *ngSwitchCase="'FAILURE'">-X</span>
-    <span *ngSwitchCase="'UNSTABLE'">-UN</span>
-    <span *ngSwitchCase="'ABORTED'">-AB</span>
-    <span *ngSwitchCase="'DISABLED'">-N/A</span>
-    <span *ngSwitchDefault>-!</span>
-</span>
-  <!--span *ngIf="jobBuild.result === 'SUCCESS'">-V</span><span *ngIf="jobBuild.result === 'FAILURE'">-X</span-->
-</a></h1>
-
+<div *ngIf="isSimpleJob(jobModel)" name="simpleJob" class="slots">
+  <h2><label for="lastBuild">Last Build:</label>
+  <a id="lastBuild" href="{{jobModel.urlJobExecution}}">{{jobModel.displayLastExecNumber}}</a>
+  </h2>
 </div>
 
+<div *ngIf="!isSimpleJob(jobModel)" name="groupedJob" class="slots">
+  <h2><label for="configurations">Configurations:</label>
+  <template ngFor let-jobBuild [ngForOf]="jobModel.listDifBuildsConfiguration">
+    <ul id="configurations">
+      <li><a  name="build" id="build" href="{{jobBuild.urlJobExecution}}">{{jobBuild.displayLastExecNumber}}
+        <span [ngSwitch]="jobBuild.result">
+          <span *ngSwitchCase="'SUCCESS'">-V</span>
+          <span *ngSwitchCase="'FAILURE'">-X</span>
+          <span *ngSwitchCase="'UNSTABLE'">-UN</span>
+          <span *ngSwitchCase="'ABORTED'">-AB</span>
+          <span *ngSwitchCase="'DISABLED'">-N/A</span>
+          <span *ngSwitchDefault>-!</span>
+        </span>
+      </a></li>
+    </ul>
+  </template>
+  </h2>
+</div>

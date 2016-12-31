@@ -3,7 +3,7 @@
  */
 import {Component, Input} from '@angular/core';
 import { OnInit } from '@angular/core';
-import { JobModel } from '../job/job.model';
+import { SimpleJob } from '../job/simpleJob.model';
 import { JobsBasicViewConfig } from './jobsBasicViewConfig';
 import { JobBasicViewModel } from './jobsBasicView.model';
 import 'rxjs/Rx';
@@ -11,6 +11,8 @@ import { Observable } from 'rxjs/Rx';
 import {JobView} from "../commons/jobView";
 import {JenkinsService} from "../commons/jenkinsService.service";
 import {FilteredJobsGroupParam} from "../commons/filteredJobsGroupParam";
+import {Job} from "../job/job.model";
+import {GroupedJob} from "../job/groupedJob.model";
 
 @Component({
   selector: 'jobsBasicView',
@@ -23,7 +25,7 @@ export class JobsBasicViewComponent implements OnInit{
   @Input()
   private urlJenkins:string;
 
-  private jobsModel: JobModel[] = [];
+  private jobsModel: Job[] = [];
   viewConfig: JobsBasicViewConfig;
   views: JobBasicViewModel[] = [];
   jobsViewSelected: JobBasicViewModel;
@@ -94,9 +96,9 @@ export class JobsBasicViewComponent implements OnInit{
       }
     }
     for(let group of this.listOfJobsGroupsNames){
-      if (group === "reminder"){
+      if (group === "reminder" || this.dynamicObjForGroupJobs[group].length === 0){
         for (let job of this.dynamicObjForGroupJobs[group]){
-          let jobModel = new JobModel();
+          let jobModel = new SimpleJob();
           jobModel.name = job.name;
           jobModel.urlJob = job.url;
           jobModel.urlJobExecution = job.lastBuild.url;
@@ -108,10 +110,11 @@ export class JobsBasicViewComponent implements OnInit{
           this.jobsModel.push(jobModel);
         }
       }else{
-        let i = 0;
-        let principalJobModel: JobModel;
+        let principalJobModel: GroupedJob = new GroupedJob();
+        principalJobModel.name = group;
+        //let groupedJobStatus:string = ""
         for (let job of this.dynamicObjForGroupJobs[group]){
-          let jobModel = new JobModel();
+          let jobModel = new SimpleJob();
           jobModel.name = job.name;
           jobModel.urlJob = job.url;
           jobModel.urlJobExecution = job.lastBuild.url;
@@ -120,17 +123,14 @@ export class JobsBasicViewComponent implements OnInit{
           jobModel.timestamp = job.lastBuild.timestamp;
           jobModel.displayLastExecNumber = job.lastBuild.displayName;
           jobModel.setStatusClass();
-          if (i === 0){
-            jobModel.listDifBuildsConfiguration = [];
-            this.jobsModel.push(jobModel);
-            principalJobModel = jobModel;
-          }else{
-
-            principalJobModel.listDifBuildsConfiguration.push(jobModel);
+          if (jobModel.result !=="SUCCESS"){
+            principalJobModel.result = jobModel.result;
+            console.log("RESULTADO GROUP JOB"+ principalJobModel.result);
           }
-          i++;
+          principalJobModel.listDifBuildsConfiguration.push(jobModel);
         }
-        //this.jobsModel.push(principalJobModel);
+        principalJobModel.setStatusClass();
+        this.jobsModel.push(principalJobModel);
       }
     }
   }
@@ -181,7 +181,6 @@ export class JobsBasicViewComponent implements OnInit{
       if(action._class === 'hudson.model.ParametersAction' ){
         for(let parameter of action.parameters){
           if (parameter.name === 'Jobs_Group' && parameter.value === this.viewConfig.filteredJobsGroupParam.jobsGroupParamValue){
-            console.log("Valor del parámetro Jobs_Group:"+ parameter.value);
             pass = true;
             break;
           }
@@ -222,7 +221,6 @@ export class JobsBasicViewComponent implements OnInit{
    * @param filtered
    */
   selectFilterByJobsGroupParam(filteredJobsGroupPara: FilteredJobsGroupParam){
-    console.log("Tratar filtrado activado.")
     this.viewConfig.filteredJobsGroupParam = filteredJobsGroupPara;
     this.initLoadJobsStatus(this.jobsViewSelected.url);
   }
