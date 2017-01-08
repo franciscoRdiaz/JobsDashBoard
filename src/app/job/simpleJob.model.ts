@@ -9,8 +9,19 @@ export class SimpleJob extends Job{
   public lastExecTime: number;
   public displayLastExecNumber: string;
   public timestamp: number;
-  public listDifBuildsConfiguration: SimpleJob[];
   public urlJob: string;
+
+  constructor(jobData: any){
+    super();
+    this.name = jobData.name;
+    this.urlJob = jobData.url;
+    this.urlJobExecution = jobData.lastBuild.url;
+    this.lastExecTime = jobData.lastBuild.duration;
+    this.result = jobData.lastBuild.result;
+    this.timestamp = jobData.lastBuild.timestamp;
+    this.displayLastExecNumber = jobData.lastBuild.displayName;
+    
+  }
 
 
 }

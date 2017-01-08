@@ -45,7 +45,6 @@ export class JobsBasicViewComponent implements OnInit{
   }
 
   public initLoadJobsStatus(url:string) {
-    this.jobsModel = [];
     this.dynamicObjForGroupJobs = {};
     this.listOfJobsGroupsNames = [];
     if (this.subscription !== undefined){
@@ -55,7 +54,6 @@ export class JobsBasicViewComponent implements OnInit{
     this.timer = Observable.interval(this.viewConfig.pollingIntervalInMilSecond);
     this.subscription = this.timer
       .subscribe(() => {
-        this.jobsModel = [];
         this.dynamicObjForGroupJobs = {};
         this.listOfJobsGroupsNames = [];
         this.getJobsStatus(url);
@@ -78,6 +76,8 @@ export class JobsBasicViewComponent implements OnInit{
    */
   createJobData(jobs: any[]){
 
+    let jobModelAux: Job[] = [];
+
     for(let job of jobs){
       if(job !== null){
         if(job.buildable === undefined){
@@ -98,30 +98,15 @@ export class JobsBasicViewComponent implements OnInit{
     for(let group of this.listOfJobsGroupsNames){
       if (group === "reminder" || this.dynamicObjForGroupJobs[group].length === 0){
         for (let job of this.dynamicObjForGroupJobs[group]){
-          let jobModel = new SimpleJob();
-          jobModel.name = job.name;
-          jobModel.urlJob = job.url;
-          jobModel.urlJobExecution = job.lastBuild.url;
-          jobModel.lastExecTime = job.lastBuild.duration;
-          jobModel.result = job.lastBuild.result;
-          jobModel.timestamp = job.lastBuild.timestamp;
-          jobModel.displayLastExecNumber = job.lastBuild.displayName;
+          let jobModel = new SimpleJob(job);
           jobModel.setStatusClass();
-          this.jobsModel.push(jobModel);
+          jobModelAux.push((jobModel));
         }
       }else{
         let principalJobModel: GroupedJob = new GroupedJob();
         principalJobModel.name = group;
-        //let groupedJobStatus:string = ""
         for (let job of this.dynamicObjForGroupJobs[group]){
-          let jobModel = new SimpleJob();
-          jobModel.name = job.name;
-          jobModel.urlJob = job.url;
-          jobModel.urlJobExecution = job.lastBuild.url;
-          jobModel.lastExecTime = job.lastBuild.duration;
-          jobModel.result = job.lastBuild.result;
-          jobModel.timestamp = job.lastBuild.timestamp;
-          jobModel.displayLastExecNumber = job.lastBuild.displayName;
+          let jobModel = new SimpleJob(job);
           jobModel.setStatusClass();
           if (jobModel.result !=="SUCCESS"){
             principalJobModel.result = jobModel.result;
@@ -130,9 +115,11 @@ export class JobsBasicViewComponent implements OnInit{
           principalJobModel.listDifBuildsConfiguration.push(jobModel);
         }
         principalJobModel.setStatusClass();
-        this.jobsModel.push(principalJobModel);
+        jobModelAux.push((principalJobModel));
       }
     }
+    this.jobsModel = jobModelAux;
+
   }
 
   addToDynamicObjForGroupJobs(job: any){

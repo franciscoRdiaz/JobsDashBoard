@@ -45,6 +45,7 @@ export class JobsBasicViewMenuConfig implements OnInit {
    */
   ngOnInit(){
     this.viewConfig = new JobsBasicViewConfig();
+
     this.jenkinsService.getViews(this.urlJenkins).subscribe(
       views => {
 

@@ -3,8 +3,8 @@
  */
 import { Injectable } from "@angular/core";
 import { Http, Response, Headers, RequestOptions } from "@angular/http";
-import { environment } from "../../environments/environment";
 import 'rxjs/Rx';
+import {ConfigService} from "./configService";
 
 @Injectable()
 export class JenkinsService {
@@ -16,7 +16,7 @@ export class JenkinsService {
   private invokedUrl: string;
   private resquestOptions: RequestOptions;
 
-  constructor(private http: Http){
+  constructor(private http: Http, private configService: ConfigService){
 
   }
 
@@ -25,7 +25,7 @@ export class JenkinsService {
     if(authentication){
       console.log("With authentication");
       this.headers.append("Access-Control-Allow-Credentials", "true");
-      this.headers.append("Authorization", "Basic " + btoa(environment.jenkinsUser + ":" + environment.jenkinsPass));
+      this.headers.append("Authorization", "Basic " + btoa(this.configService.getUser() + ":" + this.configService.getPass()));
     }
     this.headers.append("Content-Type","application/json");
     this.resquestOptions = new RequestOptions({
@@ -35,14 +35,12 @@ export class JenkinsService {
 
   getViews(urlJenkins:string){
 
-    let invokeUrl = (urlJenkins !== null && urlJenkins !== undefined) ? urlJenkins : environment.jenkinsUrl;
+    let invokeUrl = (urlJenkins !== null && urlJenkins !== undefined) ? urlJenkins : this.configService.getJenkinsUrl();
     invokeUrl = invokeUrl + this.endInitialUrl + this.endViewsUrl;
     this.configHeaders((urlJenkins === null || urlJenkins === undefined));
-    console.log("URL del api de las vistas: " + invokeUrl);
 
-    return this.http.post(invokeUrl, undefined, this.resquestOptions).map(
-      response => response.json()
-    )
+    return this.http.post(invokeUrl, undefined, this.resquestOptions)
+      .map(response => response.json())
   }
 
   /**
@@ -51,14 +49,13 @@ export class JenkinsService {
    */
   getJobsData(urlFolderOfJobs:string){
     if(urlFolderOfJobs === undefined){
-      this.invokedUrl = environment.jenkinsUrl + this.endInitialUrl + this.endJobsDataUrl;
+      this.invokedUrl = this.configService.getJenkinsUrl() + this.endInitialUrl + this.endJobsDataUrl;
     }else{
       this.invokedUrl = urlFolderOfJobs + this.endInitialUrl + this.endJobsDataUrl;
     }
 
-    return this.http.post(this.invokedUrl, undefined, this.resquestOptions).map(
-      response => this.extractDataJobs(response)
-    )
+    return this.http.post(this.invokedUrl, undefined, this.resquestOptions)
+      .map(response => this.extractDataJobs(response))
   }
 
   private extractDataJobs(response: Response){
