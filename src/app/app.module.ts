@@ -23,12 +23,14 @@ import {ConfigService} from "./commons/configService";
     HttpModule,
     JsonpModule
   ],
-  providers: [ ConfigService, {
-    provide: APP_INITIALIZER,
-    useFactory: (config: ConfigService) => () => config.load(),
-    deps: [ConfigService], multi: true
-  },
-    JenkinsService ],
+  providers: [
+    ConfigService, {
+      provide: APP_INITIALIZER,
+      useFactory: (config: ConfigService) => () =>  config.load(),
+      deps: [ConfigService], multi: true
+    },
+    JenkinsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
