@@ -14,8 +14,11 @@ export class ConfigService {
     //this.configModel = new ConfigModel();
   }
 
+  /**
+   * Load security configuration data from file
+   * @returns {Promise<T>}
+   */
   load(){
-
       return new Promise((resolve, reject) => {
         this.http.get('/assets/securityConfig.json')
           .map(res => res.json())
@@ -23,12 +26,13 @@ export class ConfigService {
               this.http.get('/plugin/monitor-pro/assets/securityConfig.json').map(res => res.json())
                 .subscribe(data => {
                   this.fillConfigModel(data);
+                  // Application execution as Jenkins`s plugin
                   console.log("Deployed as plugin.");
                   resolve();
                 });
-
         })
           .subscribe(data => {
+            //Application execution as standalone app
             this.fillConfigModel(data);
             resolve();
           });

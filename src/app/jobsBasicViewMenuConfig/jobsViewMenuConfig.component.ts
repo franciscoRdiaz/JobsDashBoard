@@ -2,11 +2,9 @@
  * Created by frdiaz on 20/12/2016.
  */
 import {Component, Output, EventEmitter, Input, OnInit} from '@angular/core';
-//import { JobsBasicViewConfig } from '../jobsBasicView/jobsBasicViewConfig';
 import { JobsBasicViewConfig } from './jobsViewMenuConfig.model';
 import {JenkinsService} from "../commons/jenkinsService.service";
 import { JobView } from '../commons/jobView';
-import {FilteredJobsGroupParam} from "../commons/filteredJobsGroupParam";
 
 
 @Component({
@@ -34,10 +32,6 @@ export class JobsBasicViewMenuConfig implements OnInit {
   @Output()
   onSetPollingInterval = new EventEmitter<number>();
 
-  @Output()
-  onChangeFilterByJobsGrupo = new EventEmitter<FilteredJobsGroupParam>();
-
-
   constructor(private jenkinsService: JenkinsService){}
 
   /**
@@ -48,7 +42,6 @@ export class JobsBasicViewMenuConfig implements OnInit {
 
     this.jenkinsService.getViews(this.urlJenkins).subscribe(
       views => {
-
         for(let view of views.views){
           this.views.push(view);
           if (view.name === views.primaryView.name){
@@ -67,23 +60,6 @@ export class JobsBasicViewMenuConfig implements OnInit {
 
   setColumnsLayout(){
     this.onSelectNumColumn.next(this.viewConfig.numColSelected);
-  }
-
-  selectFilterByJobsGroupParam(){
-    let filteredJobsGroupParam: FilteredJobsGroupParam = new FilteredJobsGroupParam();
-    filteredJobsGroupParam.checkedByJogsGroupParam = this.viewConfig.checkedByJogsGroupParam;
-    filteredJobsGroupParam.jobsGroupParamValue = this.viewConfig.jobsGroupParamValue;
-
-    if((this.viewConfig.checkedByJogsGroupParam && this.viewConfig.jobsGroupParamValue !== undefined && this.viewConfig.jobsGroupParamValue !== "")
-      || !this.viewConfig.checkedByJogsGroupParam){
-      filteredJobsGroupParam.checkedByJogsGroupParam=this.viewConfig.checkedByJogsGroupParam;
-      this.onChangeFilterByJobsGrupo.next(filteredJobsGroupParam);
-      console.log("Se filtra por Grupo de jobs");
-    }
-  }
-
-  changeJobsGroupName(){
-    this.selectFilterByJobsGroupParam();
   }
 
   onSubmit(){

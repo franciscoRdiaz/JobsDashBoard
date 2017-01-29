@@ -8,7 +8,6 @@ export class GroupedJob extends Job {
 
   public listDifBuildsConfiguration: SimpleJob[];
 
-
   constructor(){
     super();
     this.listDifBuildsConfiguration = [];

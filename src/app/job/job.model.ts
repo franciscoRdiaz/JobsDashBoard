@@ -2,9 +2,18 @@
  * Created by frdiaz on 30/12/2016.
  */
 export class Job{
-  name:string;
+
+  private _name:string;
   public result: string;
   public statusClass: string = "basic project widget unknown";
+
+  get name(): string {
+    return this._name;
+  }
+
+  set name(value: string) {
+    this._name = value;
+  }
 
   setStatusClass(){
     switch (this.result){

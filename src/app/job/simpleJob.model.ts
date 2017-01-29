@@ -20,8 +20,6 @@ export class SimpleJob extends Job{
     this.result = jobData.lastBuild.result;
     this.timestamp = jobData.lastBuild.timestamp;
     this.displayLastExecNumber = jobData.lastBuild.displayName;
-    
+
   }
-
-
 }
