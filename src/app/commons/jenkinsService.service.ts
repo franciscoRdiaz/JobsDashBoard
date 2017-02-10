@@ -8,7 +8,7 @@ import {ConfigService} from "./configService";
 import {Job} from "../job/job.model";
 import {GroupedJob} from "../job/groupedJob.model";
 import {SimpleJob} from "../job/simpleJob.model";
-import {JobView} from "./jobView";
+import {JobBasicViewModel} from "../jobsBasicView/jobsBasicView.model";
 
 @Injectable()
 export class JenkinsService {
@@ -56,10 +56,10 @@ export class JenkinsService {
   }
 
   transformToJovViews(response: Response){
-    let jobViews : JobView[] = [];
+    let jobViews : JobBasicViewModel[] = [];
 
     for(let view of response.json().views){
-      jobViews.push(new JobView(view.url, view.name));
+      jobViews.push(new JobBasicViewModel(view.url, view.name));
     }
 
     return jobViews;

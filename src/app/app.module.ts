@@ -9,6 +9,7 @@ import { JenkinsService } from './commons/jenkinsService.service';
 import { JobComponent } from './job/job.component';
 import {JobsBasicViewMenuConfig} from "./jobsBasicViewMenuConfig/jobsViewMenuConfig.component";
 import {ConfigService} from "./commons/configService";
+import { configServiceFactory } from "./commons/configServiceFactory";
 
 @NgModule({
   declarations: [
@@ -25,8 +26,7 @@ import {ConfigService} from "./commons/configService";
   ],
   providers: [
     ConfigService, {
-      provide: APP_INITIALIZER,
-      useFactory: (config: ConfigService) => () =>  config.load(),
+      provide: APP_INITIALIZER, useFactory: configServiceFactory,
       deps: [ConfigService], multi: true
     },
     JenkinsService

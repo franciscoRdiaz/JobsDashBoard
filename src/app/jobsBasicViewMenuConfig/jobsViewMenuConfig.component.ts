@@ -4,7 +4,7 @@
 import {Component, Output, EventEmitter, Input, OnInit} from '@angular/core';
 import { JobsBasicViewConfig } from './jobsViewMenuConfig.model';
 import {JenkinsService} from "../commons/jenkinsService.service";
-import { JobView } from '../commons/jobView';
+import {JobBasicViewModel} from "../jobsBasicView/jobsBasicView.model";
 
 
 @Component({
@@ -17,14 +17,14 @@ export class JobsBasicViewMenuConfig implements OnInit {
   viewConfig: JobsBasicViewConfig;
 
   toggleSettings: boolean = false;
-  views: JobView[] = [];
-  jobsViewSelected: JobView;
+  views: JobBasicViewModel[] = [];
+  jobsViewSelected: JobBasicViewModel;
 
   @Input()
   private urlJenkins: string;
 
   @Output()
-  onSelectedView = new EventEmitter<JobView>();
+  onSelectedView = new EventEmitter<JobBasicViewModel>();
 
   @Output()
   onSelectNumColumn = new EventEmitter<number>();

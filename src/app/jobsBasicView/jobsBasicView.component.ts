@@ -4,12 +4,11 @@
 import {Component, Input} from '@angular/core';
 import { OnInit } from '@angular/core';
 import { JobsBasicViewConfig } from './jobsBasicViewConfig';
-import { JobBasicViewModel } from './jobsBasicView.model';
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
-import {JobView} from "../commons/jobView";
 import {JenkinsService} from "../commons/jenkinsService.service";
 import {Job} from "../job/job.model";
+import {JobBasicViewModel} from "./jobsBasicView.model";
 
 @Component({
   selector: 'jobsBasicView',
@@ -76,7 +75,7 @@ export class JobsBasicViewComponent implements OnInit{
   /**
    * Loads data of selected view.
    */
-  loadViewSelected(jobsViewSelected: JobView){
+  loadViewSelected(jobsViewSelected: JobBasicViewModel){
     this.titleOfViewDisplay = jobsViewSelected.name;
     this.initLoadJobsStatus(jobsViewSelected.url);
     this.jobsViewSelected = jobsViewSelected;

@@ -3,8 +3,5 @@
  */
 export class JobBasicViewModel{
 
-  url:string;
-  name:string;
-
-  constructor(url:string, name:string){}
+  constructor(public url:string, public name:string){}
 }
