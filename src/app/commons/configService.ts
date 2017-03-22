@@ -19,11 +19,12 @@ export class ConfigService {
    * @returns {Promise<T>}
    */
   load(){
+    let rootUrl:string = this.removeMonitorProPath();
       return new Promise((resolve, reject) => {
-        this.http.get('/assets/securityConfig.json')
+        this.http.get(rootUrl+'assets/securityConfig.json')
           .map(res => res.json())
             .catch((error: any): any => {
-              this.http.get('/plugin/monitor-pro/assets/securityConfig.json').map(res => res.json())
+              this.http.get(rootUrl+'plugin/monitor-pro/assets/securityConfig.json').map(res => res.json())
                 .subscribe(data => {
                   this.fillConfigModel(data);
                   // Application execution as Jenkins`s plugin
@@ -39,6 +40,13 @@ export class ConfigService {
       });
   }
 
+  removeMonitorProPath(){
+    let url:string = window.location.pathname;
+    if (url.indexOf("monitor-pro") > -1){
+      url=url.slice(0,url.indexOf("monitor-pro"));
+    }
+    return url;
+  }
   fillConfigModel(res: any){
     this.configModel = new ConfigModel(res.user, res.pass, res.jenkinsUrl);
     return this.configModel;
