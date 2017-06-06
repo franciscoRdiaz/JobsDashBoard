@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
-import { JobsBasicViewComponent } from './jobsBasicView/jobsBasicView.component';
+import { JobsBasicViewComponent } from './jobs-basic-view/jobsBasicView.component';
 import { JenkinsService } from './commons/jenkinsService.service';
 import { JobComponent } from './job/job.component';
-import {JobsBasicViewMenuConfig} from "./jobsBasicViewMenuConfig/jobsViewMenuConfig.component";
+import {JobsBasicViewMenConfComponent} from "./jobs-basic-view-menu-config/jobsBasicViewMenuConfig.component";
 import {ConfigService} from "./commons/configService";
 import { configServiceFactory } from "./commons/configServiceFactory";
 
@@ -16,7 +16,7 @@ import { configServiceFactory } from "./commons/configServiceFactory";
     AppComponent,
     JobsBasicViewComponent,
     JobComponent,
-    JobsBasicViewMenuConfig
+    JobsBasicViewMenConfComponent
   ],
   imports: [
     BrowserModule,

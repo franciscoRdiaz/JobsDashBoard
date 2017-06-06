@@ -4,13 +4,13 @@ import {SimpleJob} from "./simpleJob.model";
 /**
  * Created by frdiaz on 30/12/2016.
  */
-export class GroupedJob extends Job {
+export class JobsGroup extends Job {
 
-  public listDifBuildsConfiguration: SimpleJob[];
+  public jobsList: SimpleJob[];
 
   constructor(){
     super();
-    this.listDifBuildsConfiguration = [];
+    this.jobsList = [];
     this.result = "SUCCESS";
 
   }

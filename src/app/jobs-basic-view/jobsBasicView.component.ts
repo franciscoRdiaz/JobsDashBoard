@@ -1,14 +1,15 @@
 /**
  * Created by frdiaz on 02/12/2016.
  */
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnDestroy} from '@angular/core';
 import { OnInit } from '@angular/core';
 import { JobsBasicViewConfig } from './jobsBasicViewConfig';
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
 import {JenkinsService} from "../commons/jenkinsService.service";
 import {Job} from "../job/job.model";
-import {JobBasicViewModel} from "./jobsBasicView.model";
+import {JobsBasicViewModel} from "./jobsBasicView.model";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'jobsBasicView',
@@ -16,26 +17,35 @@ import {JobBasicViewModel} from "./jobsBasicView.model";
   styleUrls: ['../app.component.css']
 })
 
-export class JobsBasicViewComponent implements OnInit{
+export class JobsBasicViewComponent implements OnInit, OnDestroy{
 
   @Input()
   private urlJenkins:string;
 
   private jobsModel: Job[] = [];
   viewConfig: JobsBasicViewConfig;
-  views: JobBasicViewModel[] = [];
-  jobsViewSelected: JobBasicViewModel;
-  titleOfViewDisplay: string ="No view selected jet.";
-  timer;
-  subscription;
+  jobsViewSelected: JobsBasicViewModel;
+  timer: Observable<number>;
+  subscription: Subscription;
 
-  constructor(private jenkinsService: JenkinsService){}
+  constructor(private jenkinsService: JenkinsService){
+    this.jobsViewSelected = new JobsBasicViewModel(undefined, "No view selected jet.");
+  }
 
   /**
    * Initializes the component. Load the initial configuration
    */
   ngOnInit(){
     this.viewConfig = new JobsBasicViewConfig();
+  }
+
+  ngOnDestroy(){
+    console.log("Llamada a ngOnDestroy.");
+    if ( !this.subscription != null){
+      console.log("Llamada a ngOnDestroy.");
+
+      this.subscription.unsubscribe();
+    }
   }
 
   /**
@@ -75,8 +85,7 @@ export class JobsBasicViewComponent implements OnInit{
   /**
    * Loads data of selected view.
    */
-  loadViewSelected(jobsViewSelected: JobBasicViewModel){
-    this.titleOfViewDisplay = jobsViewSelected.name;
+  loadViewSelected(jobsViewSelected: JobsBasicViewModel){
     this.initLoadJobsStatus(jobsViewSelected.url);
     this.jobsViewSelected = jobsViewSelected;
   }

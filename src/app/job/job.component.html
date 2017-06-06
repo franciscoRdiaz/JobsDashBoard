@@ -1,27 +1,40 @@
 <header>
-  <h2><a title="{{jobModel.name}}" href="{{jobModel.urlJob}}">{{jobModel.name}}</a> </h2>
+  <h2><a title="{{jobModel.name}}" href="{{jobModel.urlJob}}">{{jobModel.name}}</a></h2>
 </header>
 <div *ngIf="isSimpleJob(jobModel)" name="simpleJob" class="slots">
-  <h2><label for="lastBuild">Last Build:</label>
-  <a id="lastBuild" href="{{jobModel.urlJobExecution}}">{{jobModel.displayLastExecNumber}}</a>
-  </h2>
+  <div class="slot-1"><h2><label for="lastBuild">Last Build:</label>
+    <a id="lastBuild" href="{{jobModel.urlJobExecution}}">{{jobModel.displayLastExecNumber}}</a></h2></div>
+  <div class="slot-2">{{jobModel.timestamp | date:'short' }}</div>
+
 </div>
 
 <div *ngIf="!isSimpleJob(jobModel)" name="groupedJob" class="slots">
-  <h2><label for="configurations">Configurations:</label>
-  <template ngFor let-jobBuild [ngForOf]="jobModel.listDifBuildsConfiguration">
-    <ul id="configurations">
-      <li><a  name="build" id="build" href="{{jobBuild.urlJobExecution}}">{{jobBuild.displayLastExecNumber}}
-        <span [ngSwitch]="jobBuild.result">
-          <span *ngSwitchCase="'SUCCESS'">-V</span>
-          <span *ngSwitchCase="'FAILURE'">-X</span>
-          <span *ngSwitchCase="'UNSTABLE'">-UN</span>
-          <span *ngSwitchCase="'ABORTED'">-AB</span>
-          <span *ngSwitchCase="'DISABLED'">-N/A</span>
-          <span *ngSwitchDefault>-!</span>
-        </span>
-      </a></li>
-    </ul>
-  </template>
-  </h2>
+
+  <div class="slot-3"><h2><label for="configurations">Builds:</label></h2></div>
+  <ul id="configurations">
+    <template ngFor let-jobBuild [ngForOf]="jobModel.jobsList">
+      <!--ul id="configurations"-->
+      <!--<div name="SimpleJob"-->
+        <li>
+          <div class="slot-1">
+            <a name="build" id="build" href="{{jobBuild.urlJobExecution}}"> Build:
+              {{jobBuild.displayLastExecNumber}} </a> | Job: {{jobBuild.name}} --> Result:
+            <span [ngSwitch]="jobBuild.result">
+                  <span *ngSwitchCase="'SUCCESS'"> - OK</span>
+                  <span *ngSwitchCase="'FAILURE'"> - KO</span>
+                  <span *ngSwitchCase="'UNSTABLE'"> - UN</span>
+                  <span *ngSwitchCase="'ABORTED'"> - AB</span>
+                  <span *ngSwitchCase="'DISABLED'"> - N/A</span>
+                  <span *ngSwitchDefault>-!</span>
+                </span>
+          </div>
+          <div name="OtherData" class="slot-2"> | {{jobBuild.timestamp | date:'short' }}</div>
+        </li>
+      <!--/div-->
+      <!--/ul-->
+    </template>
+  </ul>
+
+
 </div>
+

@@ -2,29 +2,25 @@
  * Created by frdiaz on 20/12/2016.
  */
 import {Component, Output, EventEmitter, Input, OnInit} from '@angular/core';
-import { JobsBasicViewConfig } from './jobsViewMenuConfig.model';
+import { JobsBasicViewMenuConfig } from './jobsBasicViewMenuConfig.model';
 import {JenkinsService} from "../commons/jenkinsService.service";
-import {JobBasicViewModel} from "../jobsBasicView/jobsBasicView.model";
-
+import {JobsBasicViewModel} from "../jobs-basic-view/jobsBasicView.model";
 
 @Component({
   selector: 'menu-config',
-  templateUrl: 'jobsViewMenuConfig.component.html'
+  templateUrl: './jobsBasicViewMenuConfig.component.html'
 })
 
-export class JobsBasicViewMenuConfig implements OnInit {
+export class JobsBasicViewMenConfComponent implements OnInit {
 
-  viewConfig: JobsBasicViewConfig;
-
+  viewConfig: JobsBasicViewMenuConfig;
   toggleSettings: boolean = false;
-  views: JobBasicViewModel[] = [];
-  jobsViewSelected: JobBasicViewModel;
 
   @Input()
   private urlJenkins: string;
 
   @Output()
-  onSelectedView = new EventEmitter<JobBasicViewModel>();
+  onSelectedView = new EventEmitter<JobsBasicViewModel>();
 
   @Output()
   onSelectNumColumn = new EventEmitter<number>();
@@ -38,24 +34,24 @@ export class JobsBasicViewMenuConfig implements OnInit {
    * Initialize the component. Load the initial configuration
    */
   ngOnInit(){
-    this.viewConfig = new JobsBasicViewConfig();
+    this.viewConfig = new JobsBasicViewMenuConfig();
 
     this.jenkinsService.getViews(this.urlJenkins).subscribe(
       views => {
         for(let view of views.views){
-          this.views.push(view);
+          this.viewConfig.views.push(view);
           if (view.name === views.primaryView.name){
-            this.jobsViewSelected = view;
+            this.viewConfig.jobsViewSelected = view;
           }
         }
-        this.onSelectedView.next(this.jobsViewSelected);
+        this.onSelectedView.next(this.viewConfig.jobsViewSelected);
       },
       error => console.log(error)
     );
   }
 
   loadViewSelected(){
-    this.onSelectedView.next(this.jobsViewSelected);
+    this.onSelectedView.next(this.viewConfig.jobsViewSelected);
   }
 
   setColumnsLayout(){
@@ -64,7 +60,7 @@ export class JobsBasicViewMenuConfig implements OnInit {
 
   onSubmit(){
     this.jenkinsService.submitForm();
-    this.onSetPollingInterval.next(this.viewConfig.pollingIntervalInSec);
-    console.log("Change value of polling: "+ this.viewConfig.pollingIntervalInSec);
+    this.onSetPollingInterval.next(this.viewConfig.pollingInterval);
+    console.log("Change value of polling: "+ this.viewConfig.pollingInterval);
   }
 }

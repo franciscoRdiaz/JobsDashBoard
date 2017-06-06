@@ -6,8 +6,8 @@
       <ul>
         <li class="settings-option">
           <label for="combViewSelction">Views:</label>
-          <select [(ngModel)]="jobsViewSelected" class="form-control" id="combViewSelction" name="combViewSelction" (ngModelChange)="loadViewSelected()" >
-            <option *ngFor="let view of views" [selected]="view.name == jobsViewSelected.name" [disabled]="view.name == jobsViewSelected.name" [ngValue]="view">{{view.name}}</option>
+          <select [(ngModel)]="viewConfig.jobsViewSelected" class="form-control" id="combViewSelction" name="combViewSelction" (ngModelChange)="loadViewSelected()" >
+            <option *ngFor="let view of viewConfig.views" [selected]="view.name == viewConfig.jobsViewSelected.name" [disabled]="view.name == viewConfig.jobsViewSelected.name" [ngValue]="view">{{view.name}}</option>
           </select>
         </li>
         <li class="settings-option">
@@ -19,7 +19,7 @@
         <li class="settings-option">
           <form (ngSubmit)="onSubmit()" action="http://localhost:8080/monitor-pro/prove">
             <label for="inputPollInterval">Refresh interval (in seconds):</label>
-            <input type="number" [(ngModel)]="viewConfig.pollingIntervalInSec" id="inputPollInterval" name="inputPollInterval" min="1" max="60">
+            <input type="number" [(ngModel)]="viewConfig.pollingInterval" id="inputPollInterval" name="inputPollInterval" min="1" max="60">
             <input type="submit">
           </form>
         </li>

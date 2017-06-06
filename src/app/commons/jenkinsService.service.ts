@@ -6,21 +6,20 @@ import { Http, Response, Headers, RequestOptions } from "@angular/http";
 import 'rxjs/Rx';
 import {ConfigService} from "./configService";
 import {Job} from "../job/job.model";
-import {GroupedJob} from "../job/groupedJob.model";
+import {JobsGroup} from "../job/jobsGroup.model";
 import {SimpleJob} from "../job/simpleJob.model";
-import {JobBasicViewModel} from "../jobsBasicView/jobsBasicView.model";
+import {JobsBasicViewModel} from "../jobs-basic-view/jobsBasicView.model";
 
 @Injectable()
 export class JenkinsService {
 
   private headers = new Headers({});
-  private endInitialUrl: string = "api/json";
-  private endJobsDataUrl: string = "?tree=jobs[name,url,buildable,lastBuild[*,actions[parameters[*]]]]";
-  private endViewsUrl: string = "?tree=views[url,name],primaryView[url,name]";
+  private static readonly endJobsDataUrl: string = "api/json?tree=jobs[name,url,buildable,lastBuild[*,actions[parameters[*]]]]";
+  private static readonly endViewsUrl: string = "api/json?tree=views[url,name],primaryView[url,name]";
   private invokedUrl: string;
   private resquestOptions: RequestOptions;
-  private dynamicObjForGroupJobs= {};
-  private listOfJobsGroupsNames: string[] = [];
+  private jobsGroupsFinded= {};
+  private jobsGroupsNamesList: string[] = [];
 
   constructor(private http: Http, private configService: ConfigService){}
 
@@ -31,7 +30,7 @@ export class JenkinsService {
   configHeaders(authentication: boolean){
     if(authentication){
       console.log("With authentication");
-      this.headers.append("Access-Control-Allow-Credentials", "true");
+      //this.headers.append("Access-Control-Allow-Credentials", "true");
       this.headers.append("Authorization", "Basic " + btoa(this.configService.getUser() + ":" + this.configService.getPass()));
     }
     this.headers.append("Content-Type","application/json");
@@ -48,7 +47,7 @@ export class JenkinsService {
   getViews(urlJenkins:string){
 
     let invokeUrl = (urlJenkins !== null && urlJenkins !== undefined) ? urlJenkins : this.configService.getJenkinsUrl();
-    invokeUrl = invokeUrl + this.endInitialUrl + this.endViewsUrl;
+    invokeUrl = invokeUrl  + JenkinsService.endViewsUrl;
     this.configHeaders((urlJenkins === null || urlJenkins === undefined));
 
     return this.http.post(invokeUrl, undefined, this.resquestOptions)
@@ -56,26 +55,28 @@ export class JenkinsService {
   }
 
   transformToJovViews(response: Response){
-    let jobViews : JobBasicViewModel[] = [];
+    let jobViews : JobsBasicViewModel[] = [];
 
     for(let view of response.json().views){
-      jobViews.push(new JobBasicViewModel(view.url, view.name));
+      jobViews.push(new JobsBasicViewModel(view.url, view.name));
     }
 
     return jobViews;
   }
 
   /**
-   * Starts data retriving from the server and initilizes parameters
+   * Starts retrieving and formatting process of the Jobs State Data.
+   * @param urlFolderOfJobs
+   * @returns {Observable<R>}
    */
   getJobsStatus(urlFolderOfJobs:string){
-    this.dynamicObjForGroupJobs = {};
-    this.listOfJobsGroupsNames = [];
+    this.jobsGroupsFinded = {};
+    this.jobsGroupsNamesList = [];
 
     if(urlFolderOfJobs === undefined){
-      this.invokedUrl = this.configService.getJenkinsUrl() + this.endInitialUrl + this.endJobsDataUrl;
+      this.invokedUrl = this.configService.getJenkinsUrl()  + JenkinsService.endJobsDataUrl;
     }else{
-      this.invokedUrl = urlFolderOfJobs + this.endInitialUrl + this.endJobsDataUrl;
+      this.invokedUrl = urlFolderOfJobs + JenkinsService.endJobsDataUrl;
     }
 
     return this.http.post(this.invokedUrl, undefined, this.resquestOptions)
@@ -83,7 +84,7 @@ export class JenkinsService {
   }
 
   /**
-   * Builds presentation jobs and returns them into an array
+   * Converts backend Jobs Objects in to frontend Jobs Objects
    * @param jobs
    */
   createJobData(jobs: any[]){
@@ -96,29 +97,29 @@ export class JenkinsService {
           this.getJobsStatus(job.url);
         }else {
           if (job.lastBuild !== null) {
-              this.addToDynamicObjForGroupJobs(job);
+              this.addJobToAGroup(job);
           }
         }
       }
     }
-    for(let group of this.listOfJobsGroupsNames){
-      if (group === "reminder" || this.dynamicObjForGroupJobs[group].length === 0){
-        for (let job of this.dynamicObjForGroupJobs[group]){
+    for(let group of this.jobsGroupsNamesList){
+      if (group === "reminder" || this.jobsGroupsFinded[group].length === 0){
+        for (let job of this.jobsGroupsFinded[group]){
           let jobModel = new SimpleJob(job);
           jobModel.setStatusClass();
           jobModelAux.push((jobModel));
         }
       }else{
-        let principalJobModel: GroupedJob = new GroupedJob();
+        let principalJobModel: JobsGroup = new JobsGroup();
         principalJobModel.name = group;
-        for (let job of this.dynamicObjForGroupJobs[group]){
+        for (let job of this.jobsGroupsFinded[group]){
           let jobModel = new SimpleJob(job);
           jobModel.setStatusClass();
           if (jobModel.result !=="SUCCESS"){
             principalJobModel.result = jobModel.result;
             console.log("RESULTADO GROUP JOB"+ principalJobModel.result);
           }
-          principalJobModel.listDifBuildsConfiguration.push(jobModel);
+          principalJobModel.jobsList.push(jobModel);
         }
         principalJobModel.setStatusClass();
         jobModelAux.push((principalJobModel));
@@ -129,40 +130,41 @@ export class JenkinsService {
   }
 
   /**
-   * Adds the job to the correct group based on a job's parameter.
+   * Adds the job to the correct group, according to a job's parameter.
    * @param job
    */
-  addToDynamicObjForGroupJobs(job: any){
+  addJobToAGroup(job: any){
     for( let action of job.lastBuild.actions) {
       if (action._class === undefined || action._class === 'hudson.model.ParametersAction') {
 
         if (action.parameters !== undefined) {
           for (let i = 0; i < action.parameters.length; i++) {
             if (action.parameters[i].name === 'Jobs_Group') {
-              if (this.dynamicObjForGroupJobs[action.parameters[i].value] !== undefined) {
-                this.dynamicObjForGroupJobs[action.parameters[i].value].push(job);
+              if (this.jobsGroupsFinded[action.parameters[i].value] !== undefined) {
+                this.jobsGroupsFinded[action.parameters[i].value].push(job);
               } else {
-                this.listOfJobsGroupsNames.push(action.parameters[i].value);
-                this.dynamicObjForGroupJobs[action.parameters[i].value] = [job];
+                this.jobsGroupsNamesList.push(action.parameters[i].value);
+                this.jobsGroupsFinded[action.parameters[i].value] = [job];
               }
               break;
             } else {
               if (i === action.parameters.length - 1) {
-                if (this.dynamicObjForGroupJobs["reminder"] !== undefined) {
-                  this.dynamicObjForGroupJobs["reminder"].push(job);
+                if (this.jobsGroupsFinded["reminder"] !== undefined) {
+                  this.jobsGroupsFinded["reminder"].push(job);
                 } else {
-                  this.listOfJobsGroupsNames.push("reminder");
-                  this.dynamicObjForGroupJobs["reminder"] = [job];
+                  this.jobsGroupsNamesList.push("reminder");
+                  this.jobsGroupsFinded["reminder"] = [job
+                  ];
                 }
               }
             }
           }
         }else{
-          if (this.dynamicObjForGroupJobs["reminder"] !== undefined) {
-            this.dynamicObjForGroupJobs["reminder"].push(job);
+          if (this.jobsGroupsFinded["reminder"] !== undefined) {
+            this.jobsGroupsFinded["reminder"].push(job);
           } else {
-            this.listOfJobsGroupsNames.push("reminder");
-            this.dynamicObjForGroupJobs["reminder"] = [job];
+            this.jobsGroupsNamesList.push("reminder");
+            this.jobsGroupsFinded["reminder"] = [job];
           }
         }
         break;
@@ -172,7 +174,7 @@ export class JenkinsService {
 
   submitForm(){
     console.log("Sends form to the Server");
-    this.http.post("http://localhost:8080/monitor-pro/prove",undefined, undefined);
+    this.http.post("http://localhost:8080/jenkins/monitor-pro/prove",undefined, undefined);
   }
 
 }

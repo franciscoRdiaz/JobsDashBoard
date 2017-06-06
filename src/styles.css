@@ -7,6 +7,7 @@ body {
 .build-monitor.dashboard {
   font-size: 0.6875em;
 }
+
 .build-monitor header h1 {
   font-size: 3em;
   letter-spacing: 0.1em;
@@ -116,7 +117,7 @@ body {
   -ms-justify-content: space-between;
   justify-content: space-between;
   list-style-type: none;
-  margin: 4px 0 -4px -6px;
+  margin: 4px 4px -4px -6px;
   padding: 0;
 }
 .build-monitor.dashboard #widgets > li {
@@ -440,7 +441,18 @@ body {
   -moz-flex-direction: row;
   -ms-flex-direction: row;
   flex-direction: row;
+  padding: 5px 5px 5px 5px;
+
 }
+
+.build-monitor .widget.basic.project .slots ul {
+  width: 100%;
+}
+
+.build-monitor .widget.basic.project .slots li {
+  width: 100%;
+}
+
 .build-monitor .widget.basic.project .slots .slot {
   -webkit-flex: 1;
   -moz-flex: 1;
@@ -499,11 +511,33 @@ body {
 .build-monitor .widget.basic.project .slots .slot-1 {
   text-align: left;
   padding: 0 0 4px 8px;
+  display: inline;
+  width: 50%;
+  opacity: 0.5;
+  font-weight: bold;
 }
+
+.build-monitor .widget.basic.project .slots .slot-1 h2{
+  text-align: left;
+}
+
 .build-monitor .widget.basic.project .slots .slot-2 {
   text-align: right;
-  padding: 0 8px 4px 0;
+  padding: 5px 8px 4px 0;
+  display: inline;
+  width: 50%;
+  font-weight: bold;
+  opacity: 0.5;
+
 }
+
+.build-monitor .widget.basic.project .slots .slot-3 {
+  text-align: right;
+  padding: 0 8px 4px 10px;
+  display: inline;
+}
+
+
 .build-monitor .widget.basic.project > .progress {
   position: absolute;
   left: 0;

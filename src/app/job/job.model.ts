@@ -1,7 +1,7 @@
 /**
  * Created by frdiaz on 30/12/2016.
  */
-export class Job{
+export abstract class Job{
 
   private _name:string;
   public result: string;
@@ -15,6 +15,9 @@ export class Job{
     this._name = value;
   }
 
+  /**
+   * Changes the value of the statusClass attribute to set the Job's style class
+   */
   setStatusClass(){
     switch (this.result){
       case "SUCCESS":
@@ -37,7 +40,11 @@ export class Job{
     }
   }
 
-  setClasses(){
+  /**
+   * Returns a map with the jobs's styles classes
+   * @returns {{basic: boolean, project: boolean, widget: boolean, unknown: boolean, failing: boolean, successful: boolean, unstable: boolean, aborted: boolean, disabled: boolean}}
+   */
+  getClasses(){
     return {
       basic: true,
       project: true,
@@ -50,5 +57,4 @@ export class Job{
       disabled: this.statusClass === "disabled"
     };
   }
-
 }
