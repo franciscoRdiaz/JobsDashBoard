@@ -8,7 +8,7 @@ export class SimpleJob extends Job{
   public urlJobExecution: string;
   public lastExecTime: number;
   public displayLastExecNumber: string;
-  public timestamp: date;
+  public timestamp: Date;
   public urlJob: string;
 
   constructor(jobData: any){
