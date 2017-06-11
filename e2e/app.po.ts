@@ -1,6 +1,6 @@
-import { browser, element, by } from 'protractor';
+import { browser, by, element } from 'protractor';
 
-export class JobsDashBoardPage {
+export class Prototipo2Page {
   navigateTo() {
     return browser.get('/');
   }

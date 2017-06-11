@@ -1,14 +1,16 @@
-import { JobsDashBoardPage } from './app.po';
+import { Prototipo2Page } from './app.po';
 
-describe('jobs-dash-board App', function() {
-  let page: JobsDashBoardPage;
+describe('prototipo2 App', () => {
+  let page: Prototipo2Page;
 
   beforeEach(() => {
-    page = new JobsDashBoardPage();
+    page = new Prototipo2Page();
   });
 
-  it('should display message saying app works', () => {
+  it('should display welcome message', done => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
+    page.getParagraphText()
+      .then(msg => expect(msg).toEqual('Welcome to app!!'))
+      .then(done, done.fail);
   });
 });

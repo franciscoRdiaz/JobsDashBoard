@@ -1,31 +1,40 @@
-# JobsDashBoard
+# Monitor Pro Plugin for Jenkins
+  Monitor Pro Plugin is a plugin to monitoring the Jobs Executions, built as a SPA application. It provides to Jenkins interface of a button at the main screen. if the user clicks on it, Monitor Pro application will be open.
+    
+# Features
+  In this first version, you can:
+  - Select a view.
+  - Config the grid maximun number of columns
+  - Set polling interval in minutes
+  - If exist Jobs, cofigured as a group, that jobs will be shows as a single element in the grid.
+  
+  ![Features](doc/img2.png)
+  
+# Installation and use
+To know how install this plugin, click the next link https://wiki.jenkins-ci.org/display/JENKINS/Plugins#Plugins-Howtoinstallplugins.
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.30.
+Once the plugin's installation has finished, go to the Jenkins main page. An icon has been added at bottom of the left menu. To access the monitor plugin, you must click on it.
+ 
+  ![Monitor Pro Plugin for Jenkins](doc/img1.png)
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+# Technology
+  To build the Monitor Pro Plugin, we have used Angular and only use the jenkins plugin technology to deploy it as a jenkins plugin.
+  
+# Added Value
+  This application can be used as a jenkins plugin and also inside any other web application. If your choice is the second option, you must do several configurations to prepare it.
+  
+# Based on
+To start the building of the plugin, we have taken two reference:
 
-## Code scaffolding
+- Jenkins EzWall Plugin
+- Jenkins CI Build Monitor Plugin
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
+# Licence
+The MIT License (MIT)
+Copyright (c) 2016 Francisco R Díaz
 
-## Build
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Deploying to GitHub Pages
-
-Run `ng github-pages:deploy` to deploy to GitHub Pages.
-
-## Further help
-
-To get more help on the `angular-cli` use `ng help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
