@@ -1,5 +1,6 @@
 {
   "user": "monitor-pro",
   "pass": "1cdee4e5e9f3dc88d1dfe228f2916736",
-  "jenkinsUrl": "http://localhost:8080/jenkins/"
+  "jenkinsUrl": "http://localhost:8080/jenkins/",
+  "jenkinsPlugin": false
 }

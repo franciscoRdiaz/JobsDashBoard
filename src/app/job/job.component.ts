@@ -14,7 +14,7 @@ import {JobsGroup} from "./jobsGroup.model";
 export class JobComponent implements OnInit{
 
   @Input()
-  private jobModel: Job;
+  jobModel: Job;
 
   calculateProgres(){
   }

@@ -14,26 +14,25 @@ import {JobsBasicViewModel} from "../jobs-basic-view/jobsBasicView.model";
 export class JenkinsService {
 
   private headers = new Headers({});
-  private static readonly endJobsDataUrl: string = "api/json?tree=jobs[name,url,buildable,lastBuild[*,actions[parameters[*]]]]";
-  private static readonly endViewsUrl: string = "api/json?tree=views[url,name],primaryView[url,name]";
+  private static readonly endJobsDataUrl: string = 'api/json?tree=jobs[name,url,buildable,lastBuild[*,actions[parameters[*]]]]';
+  private static readonly endViewsUrl: string = 'api/json?tree=views[url,name],primaryView[url,name]';
   private invokedUrl: string;
   private resquestOptions: RequestOptions;
   private jobsGroupsFinded= {};
   private jobsGroupsNamesList: string[] = [];
 
-  constructor(private http: Http, private configService: ConfigService){}
+  constructor(private http: Http, private configService: ConfigService) {}
 
   /**
    * Configures headers to invoke the server
    * @param authentication
    */
-  configHeaders(authentication: boolean){
-    if(authentication){
-      console.log("With authentication");
-      //this.headers.append("Access-Control-Allow-Credentials", "true");
-      this.headers.append("Authorization", "Basic " + btoa(this.configService.getUser() + ":" + this.configService.getPass()));
+  configHeaders(authentication: boolean) {
+    if (authentication) {
+      console.log('With authentication');
+      this.headers.append('Authorization', 'Basic ' + btoa(this.configService.getUser() + ':' + this.configService.getPass()));
     }
-    this.headers.append("Content-Type","application/json");
+    this.headers.append('Content-Type', 'application/json');
     this.resquestOptions = new RequestOptions({
       headers: this.headers,
     })
@@ -44,20 +43,20 @@ export class JenkinsService {
    * @param urlJenkins
    * @returns {Observable<R>}
    */
-  getViews(urlJenkins:string){
+  getViews(urlJenkins: string) {
 
-    let invokeUrl = (urlJenkins !== null && urlJenkins !== undefined) ? urlJenkins : this.configService.getJenkinsUrl();
+    let invokeUrl = (urlJenkins !== null && urlJenkins !== undefined && urlJenkins === this.configService.getJenkinsUrl()) ? urlJenkins : this.configService.getJenkinsUrl();
     invokeUrl = invokeUrl  + JenkinsService.endViewsUrl;
-    this.configHeaders((urlJenkins === null || urlJenkins === undefined));
+    this.configHeaders((urlJenkins === null || urlJenkins === undefined || urlJenkins !== this.configService.getJenkinsUrl()));
 
     return this.http.post(invokeUrl, undefined, this.resquestOptions)
       .map(response => response.json());
   }
 
-  transformToJovViews(response: Response){
+  transformToJovViews(response: Response) {
     let jobViews : JobsBasicViewModel[] = [];
 
-    for(let view of response.json().views){
+    for (let view of response.json().views){
       jobViews.push(new JobsBasicViewModel(view.url, view.name));
     }
 
@@ -69,13 +68,13 @@ export class JenkinsService {
    * @param urlFolderOfJobs
    * @returns {Observable<R>}
    */
-  getJobsStatus(urlFolderOfJobs:string){
+  getJobsStatus(urlFolderOfJobs: string) {
     this.jobsGroupsFinded = {};
     this.jobsGroupsNamesList = [];
 
-    if(urlFolderOfJobs === undefined){
+    if (urlFolderOfJobs === undefined) {
       this.invokedUrl = this.configService.getJenkinsUrl()  + JenkinsService.endJobsDataUrl;
-    }else{
+    }else {
       this.invokedUrl = urlFolderOfJobs + JenkinsService.endJobsDataUrl;
     }
 
@@ -87,7 +86,7 @@ export class JenkinsService {
    * Converts backend Jobs Objects in to frontend Jobs Objects
    * @param jobs
    */
-  createJobData(jobs: any[]){
+  createJobData(jobs: any[]) {
 
     let jobModelAux: Job[] = [];
 
@@ -133,8 +132,8 @@ export class JenkinsService {
    * Adds the job to the correct group, according to a job's parameter.
    * @param job
    */
-  addJobToAGroup(job: any){
-    for( let action of job.lastBuild.actions) {
+  addJobToAGroup(job: any) {
+    for ( let action of job.lastBuild.actions) {
       if (action._class === undefined || action._class === 'hudson.model.ParametersAction') {
 
         if (action.parameters !== undefined) {
@@ -149,22 +148,22 @@ export class JenkinsService {
               break;
             } else {
               if (i === action.parameters.length - 1) {
-                if (this.jobsGroupsFinded["reminder"] !== undefined) {
-                  this.jobsGroupsFinded["reminder"].push(job);
+                if (this.jobsGroupsFinded['reminder'] !== undefined) {
+                  this.jobsGroupsFinded['reminder'].push(job);
                 } else {
-                  this.jobsGroupsNamesList.push("reminder");
-                  this.jobsGroupsFinded["reminder"] = [job
+                  this.jobsGroupsNamesList.push('reminder');
+                  this.jobsGroupsFinded['reminder'] = [job
                   ];
                 }
               }
             }
           }
-        }else{
-          if (this.jobsGroupsFinded["reminder"] !== undefined) {
-            this.jobsGroupsFinded["reminder"].push(job);
+        }else {
+          if (this.jobsGroupsFinded['reminder'] !== undefined) {
+            this.jobsGroupsFinded['reminder'].push(job);
           } else {
-            this.jobsGroupsNamesList.push("reminder");
-            this.jobsGroupsFinded["reminder"] = [job];
+            this.jobsGroupsNamesList.push('reminder');
+            this.jobsGroupsFinded['reminder'] = [job];
           }
         }
         break;
@@ -172,9 +171,8 @@ export class JenkinsService {
     }
   }
 
-  submitForm(){
-    console.log("Sends form to the Server");
-    this.http.post("http://localhost:8080/jenkins/monitor-pro/prove",undefined, undefined);
+  submitForm() {
+    console.log('Sends form to the Server');
   }
 
 }

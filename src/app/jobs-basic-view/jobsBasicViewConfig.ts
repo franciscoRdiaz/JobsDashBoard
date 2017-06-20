@@ -3,7 +3,7 @@
  */
 export class JobsBasicViewConfig{
 
-  classColumn: string = "columns-1";
+  classColumn: string = 'columns-1';
   pollingIntervalInMilSecond: number = 5000;
 
 }

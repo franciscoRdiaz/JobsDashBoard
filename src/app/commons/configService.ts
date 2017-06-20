@@ -1,7 +1,7 @@
-import {Injectable} from "@angular/core";
-import {Http, Response} from "@angular/http";
-import {ConfigModel} from "./configModel";
-import {isNullOrUndefined} from "util";
+import {Injectable} from '@angular/core';
+import {Http, Response} from '@angular/http';
+import {ConfigModel} from './configModel';
+import {isNullOrUndefined} from 'util';
 /**
  * Created by frdiaz on 07/01/2017.
  */
@@ -9,10 +9,9 @@ import {isNullOrUndefined} from "util";
 @Injectable()
 export class ConfigService {
 
- private configModel: ConfigModel;
+  private _configModel: ConfigModel;
 
-  constructor(private http: Http){
-    //this.configModel = new ConfigModel();
+  constructor(private http: Http) {
   }
 
   /**
@@ -21,16 +20,18 @@ export class ConfigService {
    */
   load(){
     console.log(window.location.toString());
-    let rootUrl:string = window.location.pathname;
+    let rootUrl: string = window.location.pathname;
       return new Promise((resolve, reject) => {
-        this.http.get(rootUrl+'assets/securityConfig.json')
+        this.http.get('./assets/securityConfig.json')
           .map(res => res.json())
             .catch((error: any): any => {
-              console.log("Deployed as plugin.");
+              console.log('Deployed as plugin.');
+              this._configModel = {'user': 'monitor-pro', 'pass': '1cdee4e5e9f3dc88d1dfe228f2916736',
+               'jenkinsUrl': 'http://localhost:8080/jenkins/', 'jenkinsPlugin': true};
               resolve();
         })
           .subscribe(data => {
-            //Application run as standalone app
+            // Application run as standalone app
             this.fillConfigModel(data);
             resolve();
           });
@@ -39,27 +40,35 @@ export class ConfigService {
 
   /**removeMonitorProFromPath(){
     let url:string = window.location.pathname;
-    if (url.indexOf("monitor-pro") > -1){
-      url=url.slice(0,url.indexOf("monitor-pro"));
+    if (url.indexOf('monitor-pro') > -1){
+      url=url.slice(0,url.indexOf('monitor-pro'));
     }
     return url;
   }*/
-  fillConfigModel(res: any){
-    if( !isNullOrUndefined(res)) {
-      this.configModel = new ConfigModel(res.user, res.pass, res.jenkinsUrl);
+  fillConfigModel(newConfig: any) {
+    if (!isNullOrUndefined(newConfig)) {
+      this._configModel = newConfig;
     }
-    return this.configModel;
+    return this._configModel;
   }
 
-  getUser(){
-    return this.configModel.user;
+  getUser() {
+    return this._configModel.user;
   }
 
-  getPass(){
-    return this.configModel.pass;
-  }
-  getJenkinsUrl(){
-    return this.configModel.jenkinsUrl;
+  getPass() {
+    return this._configModel.pass;
   }
 
+  getJenkinsUrl() {
+    return this._configModel.jenkinsUrl;
+  }
+
+   get configModel(): ConfigModel {
+    return this._configModel;
+  }
+
+  set configModel(value: ConfigModel) {
+    this._configModel = value;
+  }
 }

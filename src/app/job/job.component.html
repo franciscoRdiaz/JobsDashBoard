@@ -1,18 +1,17 @@
-<header>
+<header *ngIf="isSimpleJob(jobModel) || !isSimpleJob(jobModel)">
   <h2><a title="{{jobModel.name}}" href="{{jobModel.urlJob}}">{{jobModel.name}}</a></h2>
 </header>
+
 <div *ngIf="isSimpleJob(jobModel)" name="simpleJob" class="slots">
   <div class="slot-1"><h2><label for="lastBuild">Last Build:</label>
     <a id="lastBuild" href="{{jobModel.urlJobExecution}}">{{jobModel.displayLastExecNumber}}</a></h2></div>
-  <div class="slot-2">{{jobModel.timestamp | date:'short' }}</div>
-
+  <div class="slot-2">{{jobModel.timestamp | date:"dd/MM/yy hh:mm"  }}</div>
 </div>
 
 <div *ngIf="!isSimpleJob(jobModel)" name="groupedJob" class="slots">
-
   <div class="slot-3"><h2><label for="configurations">Builds:</label></h2></div>
   <ul id="configurations">
-    <template ngFor let-jobBuild [ngForOf]="jobModel.jobsList">
+    <ng-template ngFor let-jobBuild [ngForOf]="jobModel.jobsList">
       <!--ul id="configurations"-->
       <!--<div name="SimpleJob"-->
         <li>
@@ -28,11 +27,11 @@
                   <span *ngSwitchDefault>-!</span>
                 </span>
           </div>
-          <div name="OtherData" class="slot-2"> | {{jobBuild.timestamp | date:'short' }}</div>
+          <div name="OtherData" class="slot-2"> | {{jobBuild.timestamp | date:"dd/MM/yy hh:mm" }}</div>
         </li>
       <!--/div-->
       <!--/ul-->
-    </template>
+    </ng-template>
   </ul>
 
 
