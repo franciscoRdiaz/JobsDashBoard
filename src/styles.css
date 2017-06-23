@@ -517,6 +517,16 @@ body {
   font-weight: bold;
 }
 
+.build-monitor .widget.basic.project .slots .slot-1 .slot-4 {
+  text-align: right;
+  padding: 0 0 4px 8px;
+  display: inline;
+  width: 50%;  
+  font-weight: bold;
+  opacity: 0.75;
+  float: right;  
+}
+
 .build-monitor .widget.basic.project .slots .slot-1 h2{
   text-align: left;
 }

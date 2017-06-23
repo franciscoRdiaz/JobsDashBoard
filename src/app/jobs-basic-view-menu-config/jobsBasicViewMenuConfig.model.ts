@@ -10,5 +10,5 @@ export class JobsBasicViewMenuConfig {
   numColSelected = 1;
   combNumColumns: number [] = [1, 2, 3, 4, 5, 6, 7, 8];
   pollingInterval= 5;
-  configuration: ConfigModel = {'user': '', 'pass': '', 'jenkinsUrl': '', 'jenkinsPlugin': false}
+  configuration: ConfigModel = {'user': 'monitor-pro', 'pass': '', 'jenkinsUrl': 'http://localhost:8080/jenkins/', 'jenkinsPlugin': false}
 }

@@ -97,4 +97,13 @@ export class JobsBasicViewComponent implements OnInit, OnDestroy {
     this.viewConfig.pollingIntervalInMilSecond = pollingIntervalInSec * 1000;
   }
 
+  /**
+   *
+   * @param errorMesage
+   */
+  unsuscribePrevious(errorMesage: string) {
+    if ( this.subscription !== undefined) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

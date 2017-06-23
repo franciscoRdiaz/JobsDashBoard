@@ -18,7 +18,7 @@ export class ConfigService {
    * Load security configuration data from file
    * @returns {Promise<T>}
    */
-  load(){
+  load() {
     console.log(window.location.toString());
     let rootUrl: string = window.location.pathname;
       return new Promise((resolve, reject) => {
@@ -26,7 +26,7 @@ export class ConfigService {
           .map(res => res.json())
             .catch((error: any): any => {
               console.log('Deployed as plugin.');
-              this._configModel = {'user': 'monitor-pro', 'pass': '1cdee4e5e9f3dc88d1dfe228f2916736',
+              this._configModel = {'user': '', 'pass': '',
                'jenkinsUrl': 'http://localhost:8080/jenkins/', 'jenkinsPlugin': true};
               resolve();
         })

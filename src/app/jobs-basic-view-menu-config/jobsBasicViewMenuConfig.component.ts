@@ -30,7 +30,10 @@ export class JobsBasicViewMenConfComponent implements OnInit {
   @Output()
   onSetPollingInterval = new EventEmitter<number>();
 
-  constructor(private jenkinsService: JenkinsService, private configService: ConfigService){}
+  @Output()
+  onUnsuscribePrevious = new EventEmitter<string>();
+
+  constructor(private jenkinsService: JenkinsService, private configService: ConfigService) {}
 
   /**
    * Initialize the component. Load the initial configuration
@@ -42,7 +45,10 @@ export class JobsBasicViewMenConfComponent implements OnInit {
   loadViews() {
     if (this.viewConfig === undefined || this.viewConfig === null) {
       this.viewConfig = new JobsBasicViewMenuConfig();
-    }else{
+      this.viewConfig.configuration = this.configService.configModel;
+      console.log('New configuration:' + this.viewConfig.configuration.jenkinsUrl);
+    }else {
+      console.log('Previous Url:' + this.viewConfig.configuration.jenkinsUrl);
       this.urlJenkins = this.viewConfig.configuration.jenkinsUrl;
       this.viewConfig.views.splice(0, this.viewConfig.views.length);
     }
@@ -60,7 +66,10 @@ export class JobsBasicViewMenConfComponent implements OnInit {
 
         this.onSelectedView.next(this.viewConfig.jobsViewSelected);
       },
-      error => console.log(error)
+      error => { console.log(error);
+        this.onUnsuscribePrevious.next('Connection error.');
+        alert('Jenkins Connection Fails. Review connection settings.');
+      }
     );
   }
 
@@ -72,7 +81,7 @@ export class JobsBasicViewMenConfComponent implements OnInit {
     this.onSelectNumColumn.next(this.viewConfig.numColSelected);
   }
 
-  onSubmit() {    
+  onSubmit() {
     this.configService.configModel = this.viewConfig.configuration;
     this.loadViews();
     this.onSetPollingInterval.next(this.viewConfig.pollingInterval);

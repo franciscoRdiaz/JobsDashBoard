@@ -1,6 +1,6 @@
 <h2>View: {{jobsViewSelected.name}}</h2>
 <header>
-  <menu-config (onSelectedView)="loadViewSelected($event)" (onSelectNumColumn)="setColumnsLayout($event)" (onSetPollingInterval)="setPollingInterval($event)"  [urlJenkins]="urlJenkins">Configuration Menu</menu-config>
+  <menu-config (onSelectedView)="loadViewSelected($event)" (onSelectNumColumn)="setColumnsLayout($event)" (onSetPollingInterval)="setPollingInterval($event)"  (onUnsuscribePrevious)="unsuscribePrevious($event)" [urlJenkins]="urlJenkins">Configuration Menu</menu-config>
 </header>
 
 <div>

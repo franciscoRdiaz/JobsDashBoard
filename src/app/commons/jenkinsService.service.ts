@@ -29,7 +29,7 @@ export class JenkinsService {
    */
   configHeaders(authentication: boolean) {
     if (authentication) {
-      console.log('With authentication');
+      this.headers = new Headers({});
       this.headers.append('Authorization', 'Basic ' + btoa(this.configService.getUser() + ':' + this.configService.getPass()));
     }
     this.headers.append('Content-Type', 'application/json');
@@ -44,10 +44,10 @@ export class JenkinsService {
    * @returns {Observable<R>}
    */
   getViews(urlJenkins: string) {
-
     let invokeUrl = (urlJenkins !== null && urlJenkins !== undefined && urlJenkins === this.configService.getJenkinsUrl()) ? urlJenkins : this.configService.getJenkinsUrl();
     invokeUrl = invokeUrl  + JenkinsService.endViewsUrl;
-    this.configHeaders((urlJenkins === null || urlJenkins === undefined || urlJenkins !== this.configService.getJenkinsUrl()));
+     console.log('Path:' + window.location.href);
+    this.configHeaders((urlJenkins === null || urlJenkins === undefined || !window.location.href.includes(urlJenkins)));
 
     return this.http.post(invokeUrl, undefined, this.resquestOptions)
       .map(response => response.json());
@@ -90,9 +90,9 @@ export class JenkinsService {
 
     let jobModelAux: Job[] = [];
 
-    for(let job of jobs){
-      if(job !== null){
-        if(job.buildable === undefined){
+    for (let job of jobs){
+      if (job !== null) {
+        if (job.buildable === undefined) {
           this.getJobsStatus(job.url);
         }else {
           if (job.lastBuild !== null) {
@@ -116,7 +116,7 @@ export class JenkinsService {
           jobModel.setStatusClass();
           if (jobModel.result !=="SUCCESS"){
             principalJobModel.result = jobModel.result;
-            console.log("RESULTADO GROUP JOB"+ principalJobModel.result);
+            console.log('GROUP JOB Result' + principalJobModel.result);
           }
           principalJobModel.jobsList.push(jobModel);
         }
