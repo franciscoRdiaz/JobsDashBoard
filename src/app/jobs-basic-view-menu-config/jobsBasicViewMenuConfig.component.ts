@@ -69,6 +69,7 @@ export class JobsBasicViewMenConfComponent implements OnInit {
       error => { console.log(error);
         this.onUnsuscribePrevious.next('Connection error.');
         alert('Jenkins Connection Fails. Review connection settings.');
+        this.toggleSettings = true;
       }
     );
   }
