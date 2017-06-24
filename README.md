@@ -8,7 +8,7 @@
   - Set polling interval in seconds.
   - If exist Jobs cofigured as a group in Jenkins, that jobs will be shows as a single element in the grid.
   - Config the credentials and URL of the Jenkins Server that you want monitorize.
-  ![Features](doc/img1.png)
+  ![Features](doc/img.png)
   
 # Installation
 You can use this application as a plugin of Jenkins or integrated into any web application. Install application as a plugin there is no mistery, but if you want to use it into a web app, click on the link https://github.com/franciscoRdiaz/monitor-pro-spa to more information.
@@ -16,7 +16,7 @@ You can use this application as a plugin of Jenkins or integrated into any web a
 # Quick Start
   Once the plugin's installation has finished, go to the Jenkins main page. An icon has been added at bottom of the left menu. To access the monitor plugin you must click on it.
   
-  ![Features](doc/img.png)
+  ![Features](doc/img1.png)
 
 By default, Monitor Pro tries to connect to Jenkins at http://localhost:8080/jenkins, if we have cofigurated Jenkins on another port or basepath, we need to set the correct value in the configuration menu. Rememmber that Monitor Pro runs on Jenkis,  so it is not to set any user or password. You only need to fill in these filds if you run Monitor Pro on another web application or if you want monitoring another jenkins server.
 
