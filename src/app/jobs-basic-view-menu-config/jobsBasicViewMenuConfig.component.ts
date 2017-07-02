@@ -39,10 +39,15 @@ export class JobsBasicViewMenConfComponent implements OnInit {
    * Initialize the component. Load the initial configuration
    */
   ngOnInit() {
+    if (this.urlJenkins !== undefined && this.urlJenkins !== null) {
+      this.configService.configModel.jenkinsUrl = this.urlJenkins;
+    }
+
     this.loadViews();
   }
 
   loadViews() {
+    console.log('URL JENKINS: ' + this.urlJenkins);
     if (this.viewConfig === undefined || this.viewConfig === null) {
       this.viewConfig = new JobsBasicViewMenuConfig();
       this.viewConfig.configuration = this.configService.configModel;
@@ -68,7 +73,7 @@ export class JobsBasicViewMenConfComponent implements OnInit {
       },
       error => { console.log(error);
         this.onUnsuscribePrevious.next('Connection error.');
-        alert('Jenkins Connection Fails. Review connection settings.');
+        alert('Connection to Jenkins Fails. Check the connection settings.');
         this.toggleSettings = true;
       }
     );

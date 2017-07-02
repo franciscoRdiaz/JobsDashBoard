@@ -6,11 +6,11 @@ import {Component, ElementRef} from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent{
-  title = 'Monitor Pro v0.1';
-  urlJenkins: string = "http://localhost:8080/"; //by default
+export class AppComponent {
+  title = 'Monitor Pro v1.0';
+  urlJenkins: string = 'http://localhost:8080/jenkins'; // by default
 
-  constructor(elm: ElementRef){
-    this.urlJenkins = elm.nativeElement.getAttribute("urlJenkins");
+  constructor(elm: ElementRef) {
+    this.urlJenkins = elm.nativeElement.getAttribute('urlJenkins');
   }
 }

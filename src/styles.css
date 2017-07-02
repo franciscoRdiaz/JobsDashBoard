@@ -517,6 +517,26 @@ body {
   font-weight: bold;
 }
 
+.build-monitor .widget.basic.project .slots .slot-1 .job-exec-ok{
+  color: #64FE2E;
+  font-size: 120%
+}
+
+.build-monitor .widget.basic.project .slots .slot-1 .job-exec-ko{
+  color: #F5E31A;
+  font-size: 120%
+}
+
+.build-monitor .widget.basic.project .slots .slot-1 .job-exec-un{
+  color: #0FA8D2;
+  font-size: 120%
+}
+
+.build-monitor .widget.basic.project .slots .slot-1 .job-exec-unk{
+  color: #0FA8D2;
+  font-size: 120%
+}
+
 .build-monitor .widget.basic.project .slots .slot-1 .slot-4 {
   text-align: right;
   padding: 0 0 4px 8px;

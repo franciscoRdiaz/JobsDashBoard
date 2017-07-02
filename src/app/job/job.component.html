@@ -13,24 +13,24 @@
   <ul id="configurations">
     <ng-template ngFor let-jobBuild [ngForOf]="jobModel.jobsList">
       <!--ul id="configurations"-->
-      <div name="SimpleJob" class="slot-1">
+      <!--div name="SimpleJob" class="slot-1"-->
         <li>
           <div class="slot-1">
-            <span><a name="build" id="build" href="{{jobBuild.urlJobExecution}}"> Build: {{jobBuild.displayLastExecNumber}} </a></span>
-            <span> | Job: <a name="{{jobBuild.name}}" href="{{jobBuild.urlJob}}"> {{jobBuild.name}} </a></span>
-            <span [ngSwitch]="jobBuild.result">--> Result:
-                  <span *ngSwitchCase="'SUCCESS'"> - OK</span>
-                  <span *ngSwitchCase="'FAILURE'"> - KO</span>
-                  <span *ngSwitchCase="'UNSTABLE'"> - UN</span>
-                  <span *ngSwitchCase="'ABORTED'"> - AB</span>
-                  <span *ngSwitchCase="'DISABLED'"> - N/A</span>
-                  <span *ngSwitchDefault>-!</span>
+            <span> <a name="{{jobBuild.name}}" href="{{jobBuild.urlJob}}"> {{jobBuild.name}} </a></span>
+            <span><a name="build" id="build" href="{{jobBuild.urlJobExecution}}"> | {{jobBuild.displayLastExecNumber}} </a></span>           
+            <span [ngSwitch]="jobBuild.result"> &rArr;
+                  <span *ngSwitchCase="'SUCCESS'" class="job-exec-ok">Result: OK</span>
+                  <span *ngSwitchCase="'FAILURE'" class="job-exec-ko">Result: KO</span>
+                  <span *ngSwitchCase="'UNSTABLE'" class="job-exec-un">Result: UN</span>
+                  <span *ngSwitchCase="'ABORTED'">Result: - AB</span>
+                  <span *ngSwitchCase="'DISABLED'">Result: - N/A</span>
+                  <span *ngSwitchDefault class="job-exec-unk">Result: !</span>
             </span>
             <span name="OtherData"> | {{jobBuild.timestamp | date:"dd/MM/yy hh:mm" }}</span>
           </div>
           
         </li>
-      </div>      
+      <!--/div-->      
       <!--/ul-->
     </ng-template>
   </ul>
